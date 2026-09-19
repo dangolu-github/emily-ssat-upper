@@ -16,6 +16,7 @@
       const article=document.createElement('article');article.dataset.item=itemKey(item);
       const details=document.createElement('details');details.open=!!attempt;
       const summary=text('summary','Question '+item.n+' · '+item.questionType);details.append(summary,text('p',item.title,'muted'),text('h3',item.stem));
+      if(item.passage){const passage=document.createElement('details');passage.append(text('summary',item.passage.title));item.passage.paragraphs.forEach(p=>passage.append(text('p',p)));details.append(passage);}
       const choices=document.createElement('div');choices.className='choice-list';
       item.options.forEach((option,i)=>{
         const letter='ABCDE'[i],label=document.createElement('label');
@@ -42,7 +43,7 @@
     });controls();
   }
   async function load(){if(!EmilyAPI.signedIn()){items=[];render();status.textContent='Sign in to view your submitted work.';return;}busy=true;controls();status.textContent='Loading your submitted work…';const generation=++epoch;
-    try{const result=await EmilyAPI.call('mistakes');if(generation!==epoch||!EmilyAPI.signedIn())return;items=result.items;render();}catch(e){status.textContent=e.message;}finally{busy=false;controls();}}
+    try{const result=await EmilyAPI.call('mistakes');if(generation!==epoch||!EmilyAPI.signedIn())return;items=result.items;const prior=type.value;type.replaceChildren(new Option('All question types',''),...[...new Set(items.map(x=>x.questionType))].map(x=>new Option(x,x)));type.value=prior;render();}catch(e){status.textContent=e.message;}finally{busy=false;controls();}}
   [type,view].forEach(x=>x.addEventListener('change',()=>{epoch++;render();}));refresh.addEventListener('click',load);
   start.addEventListener('click',()=>{const scope=visible().map(x=>({...x}));if(!scope.length)return;epoch++;attempt={id:crypto.randomUUID(),scope,choices:{},result:null};render();list.querySelector('input')?.focus();});
   exit.addEventListener('click',()=>{attempt=null;epoch++;render();});
