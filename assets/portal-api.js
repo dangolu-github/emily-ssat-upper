@@ -1,10 +1,17 @@
 (() => {
   'use strict';
-  const key='emily-ssat-session-v1'; let token='';
+  const key='emily-ssat-session-v1'; let token='',authenticated=false,restoring=false;
   try {token=localStorage.getItem(key)||'';} catch(_){}
-  const panel=document.getElementById('account-panel'), message=panel.querySelector('[data-auth-message]'),login=panel.querySelector('form'),logout=panel.querySelector('[data-logout]');
-  function paint(){login.hidden=!!token;logout.hidden=!token;message.textContent=token?'Signed in.':'Enter your access code to view and submit your work.';}
-  function forget(){token='';try{localStorage.removeItem(key);}catch(_){}paint();window.dispatchEvent(new Event('emily-logout'));}
+  let panel=document.getElementById('account-panel');
+  if(!panel){panel=document.createElement('section');panel.id='account-panel';panel.className='panel';panel.setAttribute('aria-label','Your account');panel.innerHTML='<p data-auth-message role="status" aria-live="polite"></p><form><label>Website password <input type="password" autocomplete="current-password" required></label><button type="submit">Open website</button></form><button type="button" data-logout hidden>Forget this device</button>';document.querySelector('main').prepend(panel);}
+  const message=panel.querySelector('[data-auth-message]'),login=panel.querySelector('form'),logout=panel.querySelector('[data-logout]');
+  const title=document.createElement('h2');title.textContent='Emily · SSAT Upper';panel.prepend(title);
+  const hint=document.createElement('p');hint.className='muted';hint.textContent='Enter the website password once. This browser will remember your device.';login.prepend(hint);
+  login.querySelector('button').textContent='Open website';
+  const retry=document.createElement('button');retry.type='button';retry.textContent='Try again';retry.hidden=true;panel.append(retry);
+  function paint(){document.documentElement.classList.toggle('emily-site-locked',!authenticated);login.hidden=authenticated||!!token;logout.hidden=!authenticated;title.hidden=authenticated;retry.hidden=true;message.textContent=authenticated?'This device is remembered.':token?'Opening your website…':'Enter the website password to continue.';}
+  function forget(){token='';authenticated=false;try{localStorage.removeItem(key);}catch(_){}paint();window.dispatchEvent(new Event('emily-logout'));}
+  function accept(result){token=result.token;authenticated=true;let saved=true;try{localStorage.setItem(key,token);}catch(_){saved=false;}paint();if(!saved)message.textContent='Website open. Allow browser storage to remember this device next time.';window.dispatchEvent(new Event('emily-login'));}
   async function api(action,payload={}){
     const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),45000);
     try{
@@ -15,9 +22,11 @@
     }catch(e){if(e.name==='AbortError')throw new Error('The request took too long. Your choices are still here; please try again.');throw e;}finally{clearTimeout(timer);}
   }
   login.addEventListener('submit',async event=>{
-    event.preventDefault();const input=login.querySelector('input'),button=login.querySelector('button');button.disabled=true;message.textContent='Signing in…';
-    try{const result=await api('authenticate',{password:input.value});token=result.token;input.value='';try{localStorage.setItem(key,token);}catch(_){}paint();window.dispatchEvent(new Event('emily-login'));}
+    event.preventDefault();const input=login.querySelector('input'),button=login.querySelector('button');button.disabled=true;message.textContent='Opening your website…';
+    try{const result=await api('authenticate',{password:input.value});input.value='';accept(result);}
     catch(e){message.textContent=e.message;}finally{button.disabled=false;}
   });
-  logout.addEventListener('click',forget);window.EmilyAPI={call:api,signedIn:()=>!!token};paint();
+  async function restoreDevice(){if(!token||restoring)return;restoring=true;paint();try{accept(await api('session'));}catch(e){message.textContent=e.message;if(token)retry.hidden=false;}finally{restoring=false;}}
+  retry.addEventListener('click',restoreDevice);window.addEventListener('online',()=>{if(!authenticated)restoreDevice();});
+  logout.addEventListener('click',forget);window.EmilyAPI={call:api,signedIn:()=>authenticated};paint();restoreDevice();
 })();

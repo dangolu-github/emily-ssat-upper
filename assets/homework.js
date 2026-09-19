@@ -45,7 +45,7 @@
   form.addEventListener('change',changed);form.addEventListener('submit',e=>e.preventDefault());
   form.querySelectorAll('[data-clear]').forEach(button=>button.addEventListener('click',()=>{form.querySelectorAll('input[name="'+button.dataset.clear+'"]').forEach(x=>{x.checked=false;});changed();}));
   submit.addEventListener('click',async()=>{
-    if(!EmilyAPI.signedIn()){say('Please enter your access code before submitting.');document.querySelector('#account-panel input').focus();return;}
+    if(!EmilyAPI.signedIn()){say('Please enter your website password before submitting.');document.querySelector('#account-panel input').focus();return;}
     if(!ready){say('Load your saved work and resolve any draft choice before submitting.');return;}
     if(Object.keys(answers()).length!==20){say('Answer all 20 questions before submitting.');for(let n=1;n<=20;n++)if(!answers()['q'+n]){form.querySelector('input[name="q'+n+'"]').focus();break;}return;}
     if(!pendingId){pendingId=crypto.randomUUID();try{localStorage.setItem(storageKey+'-submit-request',pendingId);}catch(_){}}
