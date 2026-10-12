@@ -9,6 +9,15 @@
   const target=x=>({assignmentId:x.assignmentId,receiptId:x.receiptId,itemId:x.itemId});
   const itemKey=x=>x.receiptId+'_'+x.itemId;
   function text(tag,value,cls){const e=document.createElement(tag);e.textContent=value;if(cls)e.className=cls;return e;}
+  // A passage holds prose as `paragraphs`, or line-referenced prose and poems as `lines` ('' = paragraph or stanza break).
+  // Lines are numbered as on the homework page: non-blank lines only, every fifth one labelled.
+  function passageBox(p){
+    const box=document.createElement('details');box.className=p.poem?'poem':Array.isArray(p.lines)?'lined':'';box.append(text('summary',p.title||'Reading passage'));
+    if(Array.isArray(p.lines)){let n=0;p.lines.forEach(line=>{if(line===''){box.append(document.createElement('br'));return;}n++;const row=document.createElement('div');row.className='poem-line';row.append(text('span',n%5===0?String(n):'','line-number'),text('span',line));box.append(row);});}
+    else if(Array.isArray(p.paragraphs))p.paragraphs.forEach(t=>box.append(text('p',t)));
+    if(p.note)box.append(text('p',p.note,'muted'));
+    return box;
+  }
   function visible(){return items.filter(x=>(!type.value||x.questionType===type.value)&&x.removed===(view.value==='removed'));}
   function controls(){const active=!!attempt;type.disabled=view.disabled=refresh.disabled=active||busy;start.hidden=active;start.disabled=busy||!visible().length;check.hidden=exit.hidden=!active;check.disabled=busy||!!attempt?.result;exit.disabled=busy;}
   function render(){
@@ -19,7 +28,7 @@
       const article=document.createElement('article');article.dataset.item=itemKey(item);
       const details=document.createElement('details');details.open=!!attempt;
       const summary=text('summary','Question '+item.n+' · '+item.questionType);details.append(summary,text('p',item.title,'muted'),text('h3',item.stem));
-      if(item.passage){const passage=document.createElement('details');passage.append(text('summary',item.passage.title));item.passage.paragraphs.forEach(p=>passage.append(text('p',p)));details.append(passage);}
+      if(item.passage)details.append(passageBox(item.passage));
       const choices=document.createElement('div');choices.className='choice-list';
       item.options.forEach((option,i)=>{
         const letter='ABCDE'[i],label=document.createElement('label');
