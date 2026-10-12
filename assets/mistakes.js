@@ -1,5 +1,8 @@
 (() => {
   'use strict';
+  // Teacher-only submission origin (submission-origin.js): sent with the final hand-in only and never shown on this page.
+  const originForSubmit=async()=>{try{return window.PortalSubmissionOrigin?await window.PortalSubmissionOrigin.collect():null;}catch(_){return null;}};
+  const warmOrigin=()=>{try{if(window.PortalSubmissionOrigin)window.PortalSubmissionOrigin.warm();}catch(_){}};
   const list=document.getElementById('mistake-list'),status=document.getElementById('review-status'),progress=document.getElementById('redo-progress');
   const type=document.getElementById('type-filter'),view=document.getElementById('list-filter'),start=document.getElementById('redo-page'),check=document.getElementById('check-page'),exit=document.getElementById('exit-redo'),refresh=document.getElementById('refresh-list');
   let items=[],attempt=null,busy=false,epoch=0;
@@ -45,13 +48,13 @@
   async function load(){if(!EmilyAPI.signedIn()){items=[];render();status.textContent='Sign in to view your submitted work.';return;}busy=true;controls();status.textContent='Loading your submitted work…';const generation=++epoch;
     try{const result=await EmilyAPI.call('mistakes');if(generation!==epoch||!EmilyAPI.signedIn())return;items=result.items;const prior=type.value;type.replaceChildren(new Option('All question types',''),...[...new Set(items.map(x=>x.questionType))].map(x=>new Option(x,x)));type.value=prior;render();}catch(e){status.textContent=e.message;}finally{busy=false;controls();}}
   [type,view].forEach(x=>x.addEventListener('change',()=>{epoch++;render();}));refresh.addEventListener('click',load);
-  start.addEventListener('click',()=>{const scope=visible().map(x=>({...x}));if(!scope.length)return;epoch++;attempt={id:crypto.randomUUID(),scope,choices:{},result:null};render();list.querySelector('input')?.focus();});
+  start.addEventListener('click',()=>{const scope=visible().map(x=>({...x}));if(!scope.length)return;epoch++;attempt={id:crypto.randomUUID(),scope,choices:{},result:null};warmOrigin();render();list.querySelector('input')?.focus();});
   exit.addEventListener('click',()=>{attempt=null;epoch++;render();});
   check.addEventListener('click',async()=>{
     if(!attempt||busy)return;const missing=attempt.scope.find(x=>!attempt.choices[itemKey(x)]);
     if(missing){status.textContent='Answer every question on this page before checking.';const card=[...list.querySelectorAll('article')].find(x=>x.dataset.item===itemKey(missing));card.querySelector('details').open=true;card.querySelector('input').focus();return;}
     busy=true;render();status.textContent='Checking this page…';
-    try{const data=await EmilyAPI.call('redo',{requestId:attempt.id,items:attempt.scope.map(x=>({...target(x),choice:attempt.choices[itemKey(x)]}))});attempt.result=data.result;render();}
+    try{const payload={requestId:attempt.id,items:attempt.scope.map(x=>({...target(x),choice:attempt.choices[itemKey(x)]}))},submissionOrigin=await originForSubmit();const data=await EmilyAPI.call('redo',{...payload,submissionOrigin});attempt.result=data.result;render();}
     catch(e){status.textContent=e.message+' Your redo choices are preserved.';}finally{busy=false;controls();list.querySelectorAll('input').forEach(x=>{x.disabled=!!attempt?.result;});}
   });
   window.addEventListener('emily-login',load);window.addEventListener('emily-logout',()=>{epoch++;attempt=null;items=[];render();status.textContent='Signed out.';});load();

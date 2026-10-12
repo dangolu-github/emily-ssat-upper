@@ -1,5 +1,8 @@
 (() => {
   'use strict';
+  // Teacher-only submission origin (submission-origin.js): sent with the final hand-in only and never shown on this page.
+  const originForSubmit=async()=>{try{return window.PortalSubmissionOrigin?await window.PortalSubmissionOrigin.collect():null;}catch(_){return null;}};
+  const warmOrigin=()=>{try{if(window.PortalSubmissionOrigin)window.PortalSubmissionOrigin.warm();}catch(_){}};
   const $=id=>document.getElementById(id),form=$('mock-form'),status=$('mock-status'),submit=$('submit-mock'),result=$('mock-result'),conflict=$('mock-conflict');
   const assignmentId=new URLSearchParams(location.search).get('assignment')||'';
   let a=null,storage='',revision=0,epoch=0,ready=false,submitted=false,saving=false,dirty=false,timer=null,pending='',versions=null,confirmedData=null;
@@ -41,7 +44,7 @@
       let local=null;try{const raw=localStorage.getItem(storage);if(raw!==null)local=clean(JSON.parse(raw));pending=localStorage.getItem(storage+'-submit')||'';}catch(_){say('A device draft could not be loaded.');}
       const server=state.draft?clean(state.draft):null;
       if(local&&server&&JSON.stringify(local)!==JSON.stringify(server)){versions={local,server};restore(local);conflict.hidden=false;say('Choose which saved draft to continue with.');return;}
-      restore(server||local||{});ready=true;freeze(false);say(state.draft?'Saved work loaded.':'Ready. Your work will be saved as you go.');
+      restore(server||local||{});ready=true;warmOrigin();freeze(false);say(state.draft?'Saved work loaded.':'Ready. Your work will be saved as you go.');
       if(local&&!server){dirty=true;await sync();}
     }catch(e){if(generation===epoch)say(e.message);}
   }
@@ -68,7 +71,7 @@
     const omitted=writing()?0:a.items.length-Object.keys(data.answers).length;
     if(!pending)pending=crypto.randomUUID();try{localStorage.setItem(storage+'-submit',pending);}catch(_){}
     const generation=epoch;freeze(true);clearTimeout(timer);say('Submitting… Please keep this page open.');
-    try{const data2=await EmilyAPI.call('submit',{assignmentId,...data,requestId:pending,confirmOmissions:omitted>0});await display(data2.receipt,generation);}
+    try{const submissionOrigin=await originForSubmit();const data2=await EmilyAPI.call('submit',{assignmentId,...data,requestId:pending,confirmOmissions:omitted>0,submissionOrigin});await display(data2.receipt,generation);}
     catch(e){if(generation===epoch){freeze(false);say(e.message+' Press Submit again to confirm receipt.');}}
   };
   $('refresh-mock').onclick=load;window.addEventListener('online',sync);window.addEventListener('emily-login',load);

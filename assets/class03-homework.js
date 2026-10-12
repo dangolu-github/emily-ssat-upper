@@ -1,5 +1,8 @@
 (() => {
   'use strict';
+  // Teacher-only submission origin (submission-origin.js): sent with the final hand-in only and never shown on this page.
+  const originForSubmit=async()=>{try{return window.PortalSubmissionOrigin?await window.PortalSubmissionOrigin.collect():null;}catch(_){return null;}};
+  const warmOrigin=()=>{try{if(window.PortalSubmissionOrigin)window.PortalSubmissionOrigin.warm();}catch(_){}};
   const form=document.getElementById('homework'),count=document.getElementById('answer-count'),status=document.getElementById('save-status');
   const submit=document.getElementById('submit-homework'),result=document.getElementById('submission-result'),conflict=document.getElementById('draft-conflict');
   const storageKey='emily-ssat-c03-hw01-v1',assignmentId='EMI-C03-HW01';let total=0;
@@ -39,7 +42,7 @@
       const data=await EmilyAPI.call('state',{assignmentId});if(generation!==authEpoch||!EmilyAPI.signedIn())return;if(data.submitted){await displayReceipt(data.receipt);return;}
       revision=data.draft?.revision||0;const local=answers(),server=data.draft?.answers||{};
       if(data.draft&&!same(local,server)&&hasLocalDraft){conflictData={server,local};conflict.hidden=false;say('Choose which saved draft to use. Both copies will be kept.');return;}
-      if(version===when&&data.draft)restore(server);ready=true;say(data.draft?'Saved work loaded.':'Your choices are saved on this device.');
+      if(version===when&&data.draft)restore(server);ready=true;warmOrigin();say(data.draft?'Saved work loaded.':'Your choices are saved on this device.');
       if(!data.draft&&Object.keys(answers()).length){dirty=true;await sync();}
     }catch(e){say(e.message);}
   }
@@ -62,7 +65,7 @@
     if(Object.keys(answers()).length!==total){say('Answer all '+total+' questions before submitting.');for(let n=1;n<=total;n++)if(!answers()['q'+n]){form.querySelector('input[name="q'+n+'"]').focus();break;}return;}
     if(!pendingId){pendingId=crypto.randomUUID();try{localStorage.setItem(storageKey+'-submit-request',pendingId);}catch(_){}}
     const snapshot=answers(),generation=authEpoch;freeze(true);clearTimeout(timer);say('Submitting… Please keep this page open.');
-    try{const data=await EmilyAPI.call('submit',{assignmentId,answers:snapshot,requestId:pendingId});if(generation!==authEpoch||!EmilyAPI.signedIn())return;await displayReceipt(data.receipt);}
+    try{const submissionOrigin=await originForSubmit();const data=await EmilyAPI.call('submit',{assignmentId,answers:snapshot,requestId:pendingId,submissionOrigin});if(generation!==authEpoch||!EmilyAPI.signedIn())return;await displayReceipt(data.receipt);}
     catch(e){if(generation===authEpoch){freeze(false);say(e.message+' Click Submit again to confirm receipt.');}}
   });
   document.getElementById('download-answers').addEventListener('click',()=>{
