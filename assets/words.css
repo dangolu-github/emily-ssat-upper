@@ -1,0 +1,49 @@
+/* Vocabulary page: Class Words and the SSAT Upper word bank. Uses the site colours from site.css. */
+.words-status{color:#61716d}
+.word-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:22px 0 4px}
+.word-tab{min-height:44px;padding:9px 16px;border:1px solid #c9d8cf;border-radius:8px;background:#fff;color:#1d3438;font:600 15px/1.5 Arial,sans-serif;cursor:pointer}
+.word-tab[aria-pressed="true"]{background:#e0ecdf;border-color:#205e61;color:#205e61}
+.word-tools{display:flex;flex-wrap:wrap;align-items:end;gap:12px 20px;margin:16px 0 18px}
+.word-search{display:grid;gap:6px;flex:1 1 260px;font:600 15px/1.5 Arial,sans-serif}
+.word-search input{min-height:44px;padding:9px 12px;border:1px solid #a8bcb6;border-radius:5px;background:#fff;color:#1d3438;font:16px Arial,sans-serif;width:100%;box-sizing:border-box}
+.word-filter{display:flex;align-items:center;gap:8px;min-height:44px;font:600 15px/1.5 Arial,sans-serif}
+.word-filter input,.word-check input{width:20px;height:20px;accent-color:#205e61}
+.word-meter{flex-basis:100%;margin:0;color:#61716d;font:14px/1.6 Arial,sans-serif}
+.word-group{margin:12px 0;border:1px solid #dce3dd;border-radius:10px;background:#fff}
+.word-group>summary{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:4px 14px;padding:16px 18px;cursor:pointer;font:700 17px/1.4 Arial,sans-serif;color:#1d3438}
+.word-group>summary small{font-weight:500;font-size:14px;color:#61716d}
+.word-group-note{margin:0 0 10px;color:#61716d;font:14px/1.6 Arial,sans-serif}
+.word-group-body{padding:0 18px 16px}
+.word-actions{display:flex;flex-wrap:wrap;gap:8px}
+.word-actions .button{display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-height:44px;text-align:left;padding:8px 14px}
+.word-actions .button-secondary{background:#fff;color:#205e61;border:1px solid #c9d8cf}
+.word-actions .button small{font-weight:400;font-size:12px;opacity:.85}
+.word-actions .button:disabled{opacity:.45;cursor:default}
+.word-msg{min-height:1.4em;margin:8px 0 4px;color:#61716d;font:14px/1.6 Arial,sans-serif}
+.word-msg.success{color:#236241}
+.word-msg.error{color:#9a3412}
+.word-list{list-style:none;margin:6px 0 0;padding:0}
+.word-row{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;padding:14px 0;border-top:1px solid #e6ebe6}
+.word-row.is-known .word-head strong{color:#61716d;text-decoration:line-through;text-decoration-thickness:1px}
+.word-check{display:flex;flex-direction:column;align-items:center;gap:2px;font:12px/1.4 Arial,sans-serif;color:#61716d;padding-top:2px;cursor:pointer;min-width:44px}
+.word-body p{margin:0}
+.word-head strong{font-size:19px}
+.word-pos{margin-left:6px;color:#61716d;font-style:italic;font-size:15px}
+.word-en{margin-top:2px!important}
+.word-example{margin-top:6px!important;color:#4d5f5b;font-style:italic;border-left:3px solid #d4e4dc;padding-left:12px}
+.word-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px!important}
+.word-tag{padding:2px 9px;border-radius:999px;background:#e0ecdf;color:#205e61;font:600 12px/1.6 Arial,sans-serif}
+.empty-state{color:#61716d}
+.word-retry{margin-top:10px}
+@media (max-width:640px){
+  .word-group>summary{padding:14px}
+  .word-group-body{padding:0 14px 14px}
+  .word-actions{display:grid;grid-template-columns:1fr 1fr}
+  .word-actions .button{width:100%;min-width:0;margin-top:0;padding:8px 10px;white-space:normal;overflow-wrap:anywhere}
+  .word-tab{flex:1 1 auto}
+}
+@media print{
+  .word-tabs,.word-tools,.word-actions,.word-msg,.word-check span,#account-panel,nav{display:none!important}
+  .word-group{break-inside:avoid-page;border:0}
+  .word-row{break-inside:avoid}
+}
