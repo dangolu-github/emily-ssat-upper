@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Class 05 · Analogies · Use, Function and Measurement</title><meta name="robots" content="noindex,nofollow,noarchive"><style>
+:root{--ink:#1b2c35;--muted:#5e6d72;--teal:#24666b;--teal-d:#164f54;--teal-l:#e7efeb;--paper:#f4f2ed;--line:#d8e0de;--ok:#2c7a51;--ok-bg:#e3f2e8;--ok-d:#1b5a39;--warn:#88602b;--warn-bg:#faf2df}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:Georgia,"Times New Roman",serif;line-height:1.6}
+main{max-width:960px;margin:0 auto;padding:36px 40px 64px}
+button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid #b78519;outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.class-tools{font:14px/1.5 Arial,sans-serif;display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px;color:var(--muted)}
+.class-tools span{margin-right:4px}
+.class-tools button{padding:6px 12px;border:1px solid var(--teal);background:white;border-radius:6px;color:var(--teal-d);cursor:pointer;font:600 13px Arial,sans-serif}
+header{border-bottom:3px solid var(--teal);padding-bottom:20px;margin-bottom:20px}
+.eyebrow{font:700 12px/1.4 Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);margin:0}
+h1{font-size:38px;line-height:1.15;margin:10px 0}
+.subtitle{color:#52656b;font-size:17px;margin:0}
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 30px;font:600 13px/1.4 Arial,sans-serif}
+.toc a{display:inline-flex;align-items:center;gap:7px;padding:6px 12px 6px 6px;border:1px solid #c4d6cf;border-radius:999px;background:white;color:var(--teal-d);text-decoration:none}
+.toc a:hover{background:var(--teal-l)}
+.toc a b{display:inline-block;width:22px;height:22px;border-radius:50%;background:var(--teal);color:white;text-align:center;line-height:22px;font-size:12px}
+.part{margin:0 0 44px;scroll-margin-top:12px}
+.part-head{display:flex;gap:14px;align-items:center;border-top:2px solid var(--teal);padding-top:16px;margin-bottom:14px}
+.part-no{flex:none;width:40px;height:40px;border-radius:50%;background:var(--teal);color:white;font:700 18px/40px Arial,sans-serif;text-align:center}
+.part-head h2{font-size:26px;line-height:1.2;margin:2px 0 0}
+.sub-h{font:700 12px/1.4 Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:24px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+.recall{font:15px/1.5 Arial,sans-serif;background:white;border:1px solid var(--line);border-radius:6px;padding:9px 14px;margin:0 0 14px}
+.recall span{font-weight:700;color:var(--teal-d);margin-right:8px}
+.directions{font-weight:700;font-size:17px;margin:10px 0}
+.steps{display:grid;gap:8px;list-style:none;padding:0;margin:10px 0 16px;counter-reset:step}
+.steps.four{grid-template-columns:repeat(4,minmax(0,1fr))}.steps.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.steps li{counter-increment:step;background:var(--teal-l);border-radius:6px;padding:10px 12px 10px 38px;font:14px/1.45 Arial,sans-serif;position:relative}
+.steps li::before{content:counter(step);position:absolute;left:10px;top:10px;width:20px;height:20px;border-radius:50%;background:var(--teal);color:white;font:700 12px/20px Arial,sans-serif;text-align:center}
+.steps li strong{color:var(--teal-d)}
+.concept{background:white;border:1px solid var(--line);border-left:4px solid var(--teal);border-radius:0 6px 6px 0;padding:12px 18px;margin:14px 0 18px}
+.concept h4{margin:0 0 4px;font-size:18px}
+.concept ul{margin:4px 0;padding-left:20px}.concept li{margin:4px 0;font-size:16px}
+.word-list{background:white;border:1px solid var(--line);border-radius:8px}
+.word-row{display:grid;grid-template-columns:200px 1fr;gap:4px 18px;padding:12px 18px;border-top:1px solid var(--line);align-items:start}
+.word-row:first-child{border-top:0}
+.word-head{display:flex;align-items:baseline;gap:8px;padding-top:2px}
+.word{font-size:21px;margin:0}
+.pos{font:italic 14px Arial,sans-serif;color:var(--muted)}
+.vocab-toggle>summary{cursor:pointer;font:600 13px/1.5 Arial,sans-serif;color:var(--teal-d);padding:6px 11px;background:var(--teal-l);border-radius:5px;width:fit-content;list-style:none}
+.vocab-toggle>summary::-webkit-details-marker{display:none}
+.vocab-toggle .hide-vocab{display:none}.vocab-toggle[open] .show-vocab{display:none}.vocab-toggle[open] .hide-vocab{display:inline}
+.vocab-content .meaning{font:16px/1.5 Arial,sans-serif;margin:10px 0 6px}
+.vocab-content .example{font-size:17px;margin:0;border-left:3px solid #cfdfd9;padding-left:12px}
+.q{background:white;border:1px solid var(--line);border-radius:8px;padding:16px 22px;margin:14px 0;break-inside:avoid}
+.q-head{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.q-no{font:700 13px/1 Arial,sans-serif;color:white;background:var(--teal-d);border-radius:4px;padding:5px 8px}
+.q-tag{font:700 11px/1 Arial,sans-serif;letter-spacing:.1em;text-transform:uppercase;padding:5px 8px;border-radius:4px}
+.q-tag.worked{background:#f3e7c9;color:#7a5520}.q-tag.practice{background:var(--teal-l);color:var(--teal-d)}
+.q-stem{font-size:21px;font-weight:700;margin:6px 0 12px;letter-spacing:.01em}
+.options{list-style:none;padding:0;margin:0;display:grid;gap:6px}
+.options.syn{grid-template-columns:repeat(5,minmax(0,1fr))}
+.options.ana{grid-template-columns:1fr}
+.options li{position:relative;display:flex;align-items:center;gap:9px;padding:7px 10px;min-width:0;border:1px solid var(--line);border-radius:6px;font-size:17px;line-height:1.3;background:#fcfcfa}
+.opt-letter{flex:none;width:26px;height:26px;border-radius:50%;background:var(--teal-l);color:var(--teal-d);font:700 13px/26px Arial,sans-serif;text-align:center}
+.opt-text{min-width:0;overflow-wrap:anywhere}
+.opt-mark{display:none;position:absolute;top:-9px;right:-7px;width:22px;height:22px;border-radius:50%;border:2px solid white;font:700 12px/18px Arial,sans-serif;text-align:center;color:white;background:var(--ok)}
+.q.revealed .options li.correct{background:var(--ok-bg);border-color:var(--ok);font-weight:700;color:var(--ok-d);box-shadow:inset 4px 0 0 var(--ok)}
+.q.revealed .options li.correct .opt-letter{background:var(--ok);color:white}
+.q.revealed .options li.correct .opt-mark{display:inline-block}
+.q:has(>details.answer-toggle[open]) .options li.correct{background:var(--ok-bg);border-color:var(--ok);font-weight:700;color:var(--ok-d);box-shadow:inset 4px 0 0 var(--ok)}
+.q:has(>details.answer-toggle[open]) .options li.correct .opt-letter{background:var(--ok);color:white}
+.q:has(>details.answer-toggle[open]) .options li.correct .opt-mark{display:inline-block}
+.answer-toggle{margin-top:12px}
+.answer-toggle>summary{cursor:pointer;width:fit-content;font:600 13px/1.5 Arial,sans-serif;color:var(--teal-d);padding:6px 12px;border-radius:5px;background:var(--teal-l);list-style:none}
+.answer-toggle>summary::-webkit-details-marker{display:none}
+.answer-toggle>summary:hover{background:#d9e7e0}
+.answer-toggle .hide-label{display:none}.answer-toggle[open]>summary .show-label{display:none}.answer-toggle[open]>summary .hide-label{display:inline}
+.answer-content{margin-top:10px;background:#f5faf6;border:1px solid #cfe3d6;border-radius:6px;padding:12px 16px}
+.key-line{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:0;font-size:18px}
+.key-badge{font:700 14px/1 Arial,sans-serif;background:var(--ok);color:white;border-radius:4px;padding:6px 9px}
+.key-text{font-weight:700;color:var(--ok-d)}
+.why{margin:6px 0;font-size:16px}
+.option-why{list-style:none;padding:0;margin:8px 0 0;font:15px/1.5 Arial,sans-serif}
+.option-why li{display:flex;gap:10px;align-items:flex-start;padding:5px 0;border-top:1px dashed #d3e2d8}
+.option-why li:first-child{border-top:0}
+.ow-letter{flex:none;width:22px;height:22px;border-radius:50%;background:#e6ebe9;color:#455b60;font:700 12px/22px Arial,sans-serif;text-align:center;margin-top:1px}
+.option-why li.ok{color:var(--ok-d);font-weight:700}.option-why li.ok .ow-letter{background:var(--ok);color:white}
+.sort-task{background:white;border:1px dashed #9db8b2;border-radius:8px;padding:16px 22px;margin:14px 0;break-inside:avoid}
+.sort-task h4{font-size:19px;margin:6px 0 4px}
+.prompt{font:15px/1.6 Arial,sans-serif;color:#435b60;margin:0 0 8px}
+.sort-items{margin:6px 0;padding-left:24px}.sort-items li{margin:6px 0;font-size:17px}
+.inline-key{display:none;margin-left:6px;font:14px/1.4 Arial,sans-serif;color:var(--ok-d);background:var(--ok-bg);border:1px solid #bcdcc8;border-radius:4px;padding:2px 8px}
+.sort-task.revealed .inline-key{display:inline-block}
+.sort-task:has(>details.answer-toggle[open]) .inline-key{display:inline-block}
+.key-note{font:14px/1.5 Arial,sans-serif;color:var(--muted);margin:0}
+.teacher-notes{background:var(--warn-bg);border-left:3px solid var(--warn);padding:10px 14px;margin:10px 0 0;font:14.5px/1.55 Arial,sans-serif}
+.teacher-notes::before{content:"Teacher note";display:block;font:700 11px/1.4 Arial,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--warn);margin-bottom:2px}
+.teacher-notes p{margin:4px 0}
+.plan{background:var(--warn-bg);border:1px solid #e6d3a8;border-left:4px solid var(--warn);border-radius:0 6px 6px 0;padding:12px 18px;margin:0 0 20px;font:15px/1.55 Arial,sans-serif}
+.plan .eyebrow{color:var(--warn)}.plan ol{margin:6px 0;padding-left:22px}.plan li{margin:3px 0}.plan-foot{margin:6px 0 0;color:#6b5a3a;font-size:14px}
+.teacher-panel{margin:30px 0 0;background:white;border:1px solid var(--line);border-radius:8px;padding:10px 16px}
+.teacher-panel>summary{cursor:pointer;font:700 14px/1.6 Arial,sans-serif;color:var(--warn)}
+.panel-note{font:14px/1.5 Arial,sans-serif;color:var(--muted)}
+.source-map{font:13.5px/1.55 Arial,sans-serif}.source-map table{border-collapse:collapse;width:100%;table-layout:fixed}.source-map th,.source-map td{border:1px solid #c0ceca;padding:7px;vertical-align:top;overflow-wrap:anywhere;text-align:left}.source-map th{background:var(--teal-l)}
+.pacing{font:14px/1.6 Arial,sans-serif;background:var(--warn-bg);border-left:3px solid var(--warn);padding:10px 14px;margin:12px 0 4px}
+.bridge{background:white;padding:24px 32px;margin-top:10px;border-top:4px solid var(--teal);border-radius:0 0 8px 8px;scroll-margin-top:12px}
+.bridge h2{font-size:28px;margin:8px 0}.bridge>p:not(.eyebrow){font-size:19px;line-height:1.8}.bridge strong{color:#125e62}
+footer{font:13px Arial,sans-serif;margin-top:32px;color:#647278}
+@media(max-width:1px){.options.syn{grid-template-columns:repeat(2,minmax(0,1fr))}.steps.four,.steps.three{grid-template-columns:1fr 1fr}.word-row{grid-template-columns:1fr}}
+@media(max-width:1px){main{padding:22px 16px 48px}h1{font-size:29px}.part-head h2{font-size:22px}.q,.sort-task{padding:14px 14px}.options.syn{grid-template-columns:1fr}.steps.four,.steps.three{grid-template-columns:1fr}.bridge{padding:18px 16px}.bridge>p:not(.eyebrow){font-size:17px}.source-map table{table-layout:auto}}
+@media print{body{background:white}main{padding:0;max-width:none}.class-tools,.toc,footer,.teacher-panel,.answer-toggle{display:none!important}h1{font-size:26px}
+.q,.sort-task{padding:10px 12px;margin:8px 0}.options li{font-size:11pt;padding:4px 8px}.part{margin-bottom:24px}.part-head{break-after:avoid}.bridge>p:not(.eyebrow){font-size:12pt;line-height:1.5}
+.q.revealed .options li.correct,.q:has(>details.answer-toggle[open]) .options li.correct{background:#fcfcfa;border-color:var(--line);box-shadow:none;font-weight:400;color:var(--ink)}
+.q .opt-mark{display:none!important}.inline-key{display:none!important}}
+
+.explain-toggle{margin-top:8px}
+.explain-toggle>summary{cursor:pointer;width:fit-content;font:600 13px/1.5 Arial,sans-serif;color:var(--ok-d);padding:5px 11px;border-radius:5px;background:white;border:1px solid #bcdcc8;list-style:none}
+.explain-toggle>summary::-webkit-details-marker{display:none}
+.explain-toggle>summary:hover{background:var(--ok-bg)}
+.explain-toggle .hide-exp{display:none}.explain-toggle[open]>summary .show-exp{display:none}.explain-toggle[open]>summary .hide-exp{display:inline}
+.explain-content{margin-top:8px;padding-top:2px}
+.reason-list{margin:4px 0;padding-left:22px;font:15px/1.5 Arial,sans-serif}.reason-list li{margin:3px 0}
+
+.why-list{margin:4px 0 2px;padding-left:20px;font-size:16px}.why-list li{margin:4px 0}
+.ow-label{font:700 11px/1.4 Arial,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:10px 0 0}
+.tn-head{font-weight:700;margin:0 0 4px}
+.tn-list{margin:2px 0;padding-left:18px}.tn-list li{margin:3px 0}
+.word-toggle{margin:6px 0 10px}.word-table th{text-align:left;white-space:nowrap;padding-right:10px;vertical-align:top}.word-table td{line-height:1.5}</style><style>#ink-fit{position:relative;overflow:hidden}#ink-stage{position:relative;margin:0 auto;transform-origin:0 0}#readonly-ink{position:absolute;left:0;top:0;pointer-events:none;z-index:100}#readonly-ink svg{position:absolute;left:0;top:0;overflow:visible}#readonly-ink .ink-note{position:absolute;white-space:pre-wrap;background:#fffdf3;border:1px solid #d4b7a7;border-radius:9px;padding:9px 11px;color:#c73f3f;font:17px/1.55 system-ui,"PingFang SC",sans-serif;overflow:auto;pointer-events:auto;box-sizing:border-box}#annotation-transcript{position:relative;margin-top:60px;border-top:1px solid #d6ddd5;padding-top:10px}#annotation-transcript li{white-space:pre-wrap;margin:15px 0;font-family:system-ui,"PingFang SC",sans-serif;break-inside:avoid}nav.tools{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin:0 0 18px;font:15px/1.5 Arial,sans-serif}nav.tools a{color:#20585e;font-weight:600}nav.tools button{font:15px Arial,sans-serif;padding:8px 12px;min-height:44px;background:#edf4eb;color:#245f51;border:1px solid #bdcfc2;border-radius:6px;cursor:pointer}nav.tools button:focus-visible,nav.tools a:focus-visible{outline:3px solid #be721d;outline-offset:3px}body.hide-annotations #readonly-ink{display:none}@media print{#ink-fit{height:auto!important;overflow:visible}#ink-stage{transform:none!important;width:auto!important}#readonly-ink{display:none}nav.tools{display:none!important}#annotation-transcript{display:block;margin-top:30px}}</style></head><body><div id="ink-fit"><div id="ink-stage"><main><nav class="tools"><span>Class 05 · 17 October 2026</span><a href="summary.html" target="_top">Class Summary →</a><button type="button" id="toggle-annotations" aria-pressed="true">Hide annotations</button><button type="button" onclick="window.print()">Print / Save as PDF</button></nav><header><p class="eyebrow">Emily · SSAT Upper Level · Vocabulary</p><h1>Observation, Measurement<br>and Explanation</h1><p class="subtitle">One analogy relationship: what a thing is for, or what it measures.</p></header><section class="part" id="part-5"><div class="part-head"><span class="part-no">5</span><div><p class="eyebrow">Analogies · Block B</p><h2>Use, function and measurement</h2></div></div>
+<p class="directions">Choose the pair that shows the same relationship as the pair in capitals.</p><div class="concept"><h4>Use, function and measurement</h4><ul>
+<li><strong>What it is:</strong> the first word is a thing; the second is what it is <em>for</em>, what it <em>measures</em>, or who <em>uses</em> it.</li>
+<li><strong>Three connector sentences:</strong> <em>___ is used to ___</em> (binoculars → observe); <em>___ measures ___</em> (thermometer → temperature); <em>___ uses a ___</em> (carpenter → hammer). Decide which of the three fits the capitals first.</li>
+<li><strong>Grammar is a clue:</strong> if the second word in capitals is a verb, the answer’s second word must be a verb (<em>ballast → stabilize</em>); if it is a quantity noun, the answer needs a quantity noun (<em>barometer → pressure</em>), not an adjective (<em>ruler → long</em>).</li>
+<li><strong>Not the same as:</strong> a place where it is used (<em>microscope → laboratory</em>), a material it works on (<em>shovel → soil</em>), what it is made of (<em>lens → glass</em>), or a quality it has (<em>ruler → long</em>).</li></ul>
+<h4>Words to know</h4><ul>
+<li><strong>Instrument words:</strong> <em>instrument, implement, tool, utensil, device, apparatus, gauge, meter</em>; <em>calibrate</em> (set an instrument to measure correctly).</li>
+<li><strong>Instruments and what they measure:</strong> <em>barometer → pressure; thermometer → temperature; speedometer → speed; scale → weight (mass); odometer → distance; compass → direction; tracking device → location</em>.</li>
+<li><strong>Tricky words:</strong> <em>ballast</em> (heavy material carried to keep a ship steady: used to <em>stabilize</em>); <em>lubricant</em> (reduces friction; the pair is thing → what it reduces, not thing → action); <em>brake</em> (used to <em>slow</em>, not to stop a vehicle completely); <em>filter → water</em> (the material, not the action: purify); <em>compass → sailor</em> (user, in the wrong direction).</li></ul></div><article class="q revealed" id="q-B1" data-item="B1" data-key="A">
+<div class="q-head"><span class="q-no">B1</span><span class="q-tag worked">Worked example</span></div>
+<p class="q-stem">TRACKING DEVICE is to LOCATION as</p><details class="answer-toggle word-toggle"><summary><span class="show-label">More synonyms and antonyms</span><span class="hide-label">Hide synonyms and antonyms</span></summary><div class="answer-content"><table class="demo-map word-table"><tbody><tr><th>TRACKING DEVICE (n.)</th><td><strong>Synonyms:</strong> tracker, monitor, locator, transmitter<br><strong>Antonyms:</strong> no antonym<br><strong>Related:</strong> track, trace, monitor, detect, signal</td></tr><tr><th>LOCATION (n.)</th><td><strong>Synonyms:</strong> position, site, place, whereabouts, locale<br><strong>Antonyms:</strong> no antonym<br><strong>Related:</strong> locate, dislocate (put out of place), relocate</td></tr></tbody></table></div></details>
+<ol class="options ana"><li class="correct"><span class="opt-letter">A</span><span class="opt-text">barometer is to pressure</span><span class="opt-mark">✓<span class="sr"> correct answer</span></span></li><li><span class="opt-letter">B</span><span class="opt-text">telescope is to distant</span></li><li><span class="opt-letter">C</span><span class="opt-text">compass is to sailor</span></li><li><span class="opt-letter">D</span><span class="opt-text">ruler is to long</span></li><li><span class="opt-letter">E</span><span class="opt-text">microscope is to laboratory</span></li></ol>
+<details class="answer-toggle" open=""><summary><span class="show-label">Show answer</span><span class="hide-label">Hide answer</span></summary><div class="answer-content">
+<p class="key-line"><span class="key-badge">Answer A</span><span class="key-text">barometer is to pressure</span></p><details class="explain-toggle"><summary><span class="show-exp">Show explanation</span><span class="hide-exp">Hide explanation</span></summary><div class="explain-content"><ul class="why-list"><li><strong>Connector:</strong> A tracking device records (measures) location.</li></ul><p class="ow-label">Each option</p><ul class="option-why"><li class="ok"><span class="ow-letter">A</span><span>A barometer measures pressure: instrument → quantity measured.</span></li><li><span class="ow-letter">B</span><span><em>Distant</em> describes what a telescope looks at; it is not a quantity it measures.</span></li><li><span class="ow-letter">C</span><span>A sailor <em>uses</em> a compass; the order is user ← tool, not tool → what it measures.</span></li><li><span class="ow-letter">D</span><span><em>Long</em> is a quality, not the measured quantity (length).</span></li><li><span class="ow-letter">E</span><span>A laboratory is <em>where</em> a microscope is used.</span></li></ul></div></details></div></details></article><div class="sort-task revealed" id="q-SORT-B" data-item="SORT-B">
+<div class="q-head"><span class="q-no">Quick check</span><span class="q-tag practice">Immediate practice</span></div>
+<h4>Complete the connector</h4><p class="prompt">Complete each sentence with one word.</p>
+<ol class="sort-items"><li><span>A speedometer measures ______.</span> <span class="inline-key"><strong>speed</strong></span></li><li><span>A shovel is used to ______.</span> <span class="inline-key"><strong>dig</strong></span></li><li><span>A scale measures ______.</span> <span class="inline-key"><strong>weight (or mass)</strong></span></li></ol>
+<details class="answer-toggle" open=""><summary><span class="show-label">Show answers</span><span class="hide-label">Hide answers</span></summary><div class="answer-content"><p class="key-note">Answers are marked beside each item above.</p></div></details></div><article class="q revealed" id="q-B2" data-item="B2" data-key="C">
+<div class="q-head"><span class="q-no">B2</span><span class="q-tag practice">Practice</span></div>
+<p class="q-stem">BINOCULARS is to OBSERVE as</p><details class="answer-toggle word-toggle"><summary><span class="show-label">More synonyms and antonyms</span><span class="hide-label">Hide synonyms and antonyms</span></summary><div class="answer-content"><table class="demo-map word-table"><tbody><tr><th>BINOCULARS (n.)</th><td><strong>Synonyms:</strong> field glasses<br><strong>Antonyms:</strong> no antonym<br><strong>Related:</strong> telescope, microscope, lens, magnify</td></tr><tr><th>OBSERVE (v.)</th><td><strong>Synonyms:</strong> watch, monitor, notice, perceive, scrutinize, examine<br><strong>Antonyms:</strong> ignore, overlook, disregard, neglect<br><strong>Related:</strong> observation, observant, observatory; also observe = obey (a rule) or celebrate (a holiday)</td></tr></tbody></table></div></details>
+<ol class="options ana"><li><span class="opt-letter">A</span><span class="opt-text">twig is to termite</span></li><li><span class="opt-letter">B</span><span class="opt-text">shovel is to soil</span></li><li class="correct"><span class="opt-letter">C</span><span class="opt-text">scale is to weigh</span><span class="opt-mark">✓<span class="sr"> correct answer</span></span></li><li><span class="opt-letter">D</span><span class="opt-text">laboratory is to experiment</span></li><li><span class="opt-letter">E</span><span class="opt-text">lens is to glass</span></li></ol>
+<details class="answer-toggle" open=""><summary><span class="show-label">Show answer</span><span class="hide-label">Hide answer</span></summary><div class="answer-content">
+<p class="key-line"><span class="key-badge">Answer C</span><span class="key-text">scale is to weigh</span></p><details class="explain-toggle"><summary><span class="show-exp">Show explanation</span><span class="hide-exp">Hide explanation</span></summary><div class="explain-content"><ul class="why-list"><li>Binoculars are used to observe; a scale is used to weigh.</li></ul><p class="ow-label">Other options</p><ul class="option-why"><li><span class="ow-letter">A</span><span>a twig was used to reach termites, but <em>termite</em> is the target, not the action.</span></li><li><span class="ow-letter">B</span><span>soil is the material.</span></li><li><span class="ow-letter">D</span><span>a laboratory is a place.</span></li><li><span class="ow-letter">E</span><span>glass is what a lens is made of.</span></li></ul></div></details></div></details></article><article class="q revealed" id="q-B3" data-item="B3" data-key="A">
+<div class="q-head"><span class="q-no">B3</span><span class="q-tag practice">Practice</span></div>
+<p class="q-stem">BALLAST is to STABILIZE as</p><details class="answer-toggle word-toggle"><summary><span class="show-label">More synonyms and antonyms</span><span class="hide-label">Hide synonyms and antonyms</span></summary><div class="answer-content"><table class="demo-map word-table"><tbody><tr><th>BALLAST (n.)</th><td><strong>Synonyms:</strong> counterweight, stabilizer, weight<br><strong>Antonyms:</strong> no antonym<br><strong>Related:</strong> keel, anchor, cargo; ballast is also the stone bed under railway tracks</td></tr><tr><th>STABILIZE (v.)</th><td><strong>Synonyms:</strong> steady, balance, secure, settle, anchor, firm up<br><strong>Antonyms:</strong> destabilize, unsettle, upset, topple, disturb<br><strong>Related:</strong> stable, stability, unstable</td></tr></tbody></table></div></details>
+<ol class="options ana"><li class="correct"><span class="opt-letter">A</span><span class="opt-text">brake is to slow</span><span class="opt-mark">✓<span class="sr"> correct answer</span></span></li><li><span class="opt-letter">B</span><span class="opt-text">fuel is to engine</span></li><li><span class="opt-letter">C</span><span class="opt-text">lubricant is to friction</span></li><li><span class="opt-letter">D</span><span class="opt-text">magnet is to metal</span></li><li><span class="opt-letter">E</span><span class="opt-text">filter is to water</span></li></ol>
+<details class="answer-toggle" open=""><summary><span class="show-label">Show answer</span><span class="hide-label">Hide answer</span></summary><div class="answer-content">
+<p class="key-line"><span class="key-badge">Answer A</span><span class="key-text">brake is to slow</span></p><details class="explain-toggle"><summary><span class="show-exp">Show explanation</span><span class="hide-exp">Hide explanation</span></summary><div class="explain-content"><ul class="why-list"><li>Ballast (heavy material carried in a ship) is used to stabilize it; a brake is used to slow a vehicle.</li><li>Only A pairs a thing with the action it exists to perform.</li><li>C names what a lubricant <em>reduces</em>, not the action; B, D and E name an object the first thing works with.</li></ul></div></details></div></details></article></section><footer>Name the thing, then its exact job.</footer></main><div id="readonly-ink"></div></div></div><script>(function(){const data={"items":[]},W=1008,root=document.getElementById('readonly-ink'),stage=document.getElementById('ink-stage'),fit=document.getElementById('ink-fit'),NS='http://www.w3.org/2000/svg';stage.style.width=W+'px';let s=1;const svg=document.createElementNS(NS,'svg');svg.setAttribute('width','1');svg.setAttribute('height','1');svg.setAttribute('aria-hidden','true');root.append(svg);const nodes=[];for(const i of data.items){if(i.type==='text'){const e=document.createElement('div');e.className='ink-note';e.textContent=i.text;e.style.width=i.w+'px';e.style.height=i.h+'px';e.style.color=i.color;root.append(e);nodes.push([i,e]);}else{const p=document.createElementNS(NS,'path');const q=i.points;let d='M'+q[0][0]+' '+q[0][1];if(q.length===1)d+=' l0.1 0';for(let k=1;k<q.length;k++)d+=' L'+q[k][0]+' '+q[k][1];p.setAttribute('d',d);p.setAttribute('fill','none');p.setAttribute('stroke',i.color);p.setAttribute('stroke-width',i.width);p.setAttribute('stroke-opacity',i.opacity);p.setAttribute('stroke-linecap','round');p.setAttribute('stroke-linejoin','round');svg.append(p);nodes.push([i,p]);}}function fitStage(){const vw=document.documentElement.clientWidth||window.innerWidth||0;if(vw<40){s=1;stage.style.transform='';stage.style.marginLeft='auto';fit.style.height='';return}s=Math.min(1,vw/W);stage.style.transform=s<1?'scale('+s+')':'';stage.style.marginLeft=s<1?'0':'auto';const h=stage.offsetHeight;fit.style.height=h?Math.ceil(h*s)+'px':'';}function render(){fitStage();const sr=stage.getBoundingClientRect();for(const [i,e] of nodes){const a=document.querySelector(i.anchor.selector);const r=a&&a.getBoundingClientRect();if(!a||(r.width===0&&r.height===0)){e.style.display='none';continue}e.style.display='';const x=(r.left-sr.left)/s-i.anchor.left,y=(r.top-sr.top)/s-i.anchor.top;if(i.type==='text'){e.style.left=i.x+x+'px';e.style.top=i.y+y+'px'}else{e.setAttribute('transform','translate('+x+' '+y+')')}}}addEventListener('resize',render);addEventListener('load',render);document.addEventListener('toggle',()=>requestAnimationFrame(render),true);addEventListener('afterprint',render);if(window.ResizeObserver)new ResizeObserver(()=>requestAnimationFrame(render)).observe(document.documentElement);document.fonts.ready.then(render);setTimeout(render,400);setTimeout(render,1500);render()})();</script><script>document.getElementById('toggle-annotations').onclick=function(){var hidden=document.body.classList.toggle('hide-annotations');this.setAttribute('aria-pressed',String(!hidden));this.textContent=hidden?'Show annotations':'Hide annotations';};</script><script data-paper-launch="1" src="../assets/paper-open.js?v=20261007" data-resource="paper-cfe4650d91268bba8b96" data-portal="emily" data-endpoint="https://script.google.com/macros/s/AKfycbxweDGTCI_0wiLmk0mGQ_mouUdyT-IvylNOwoyfzDHD3eK50cvo1f4aKZqeNG989-EL/exec"></script>
+</body></html>
