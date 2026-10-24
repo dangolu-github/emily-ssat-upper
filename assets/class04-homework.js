@@ -29,7 +29,7 @@
   function renderQuestions(a){
     form.replaceChildren();let part='';total=a.items.length;
     const el=(tag,value)=>{const x=document.createElement(tag);x.textContent=value;return x;};
-    a.items.forEach(item=>{if(item.part!==part){part=item.part;const p=a.passages[part];form.append(el('h2',p.title));if(!p.lines&&!p.paragraphs){if(p.note){const note=el('p',p.note);note.className='muted';form.append(note);}return renderItem(item);}if(p.intro){const intro=el('p',p.intro);intro.className='muted';form.append(intro);}const passage=document.createElement('section');passage.className='card reading-passage'+(p.poem?' poem':p.lines?' lined':'');
+    a.items.forEach(item=>{if(item.part!==part){part=item.part;const p=a.passages[part];form.append(el('h2',p.title));if(!p.lines&&!p.paragraphs){if(p.note){const note=el('p',p.note);note.className='muted';form.append(note);}return renderItem(item);}if(p.intro){const intro=el('p',p.intro);intro.className='muted';form.append(intro);}const passage=document.createElement('section');passage.className='card reading-passage'+(p.poem?' poem':p.lines?' lined':'');if(p.lines)passage.dataset.printLines='';
       if(p.lines){let n=0;p.lines.forEach(line=>{if(line===''){passage.append(document.createElement('br'));return;}n++;const row=document.createElement('div');row.className='poem-line';const num=el('span',n%5===0?String(n):'');num.className='line-number';row.append(num,el('span',line));passage.append(row);});}
       else p.paragraphs.forEach(t=>passage.append(el('p',t)));form.append(passage);if(p.note){const note=el('p',p.note);note.className='muted';form.append(note);}}
       renderItem(item);
@@ -77,5 +77,13 @@
     const url=URL.createObjectURL(new Blob([lines.join('\n')+'\n'],{type:'text/plain;charset=utf-8'})),link=document.createElement('a');link.href=url;link.download='Emily-'+assignmentId+'-Answers.txt';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
   });
   window.addEventListener('emily-login',()=>{authEpoch++;load();});window.addEventListener('emily-logout',()=>{authEpoch++;ready=false;submitted=false;dirty=false;clearTimeout(timer);clearMarks();freeze(false);conflict.hidden=true;try{restore(clean(JSON.parse(localStorage.getItem(storageKey)||'{}')));}catch(_){}form.replaceChildren();rendered=false;say('Signed out. Your local draft is preserved.');});
+  // Print: a passage with numbered lines prints one source line per printed line (2026-10-24). Its widest line is measured in em
+  // near the printed size (first at 12px, then at the size that width gives on A4); site.css shrinks that passage, never below 7pt.
+  const lineFits=[];
+  window.addEventListener('beforeprint',()=>{document.querySelectorAll('[data-print-lines]').forEach(block=>{const lines=Array.from(block.children).filter(n=>n.classList.contains('poem-line'));if(!lines.length)return;block.classList.add('print-lines-measure');
+    const widestAt=px=>{block.style.setProperty('--print-measure-size',px+'px');return Math.max(...lines.map(line=>{const r=document.createRange();r.selectNodeContents(line);return r.getBoundingClientRect().width/px;}));};
+    let em=widestAt(12);if(em>0)em=Math.max(em,widestAt(Math.min(13.6,685/em)));block.classList.remove('print-lines-measure');block.style.removeProperty('--print-measure-size');
+    if(em>0&&em<=72){block.style.setProperty('--print-line-em',em.toFixed(2));block.classList.add('print-lines-fit');lineFits.push(block);}});});   // above 72em even 7pt overflows A4: it keeps wrapping
+  window.addEventListener('afterprint',()=>{lineFits.splice(0).forEach(b=>{b.classList.remove('print-lines-fit');b.style.removeProperty('--print-line-em');});});
   window.addEventListener('online',sync);document.getElementById('refresh-work').addEventListener('click',load);updateCount();load();
 })();

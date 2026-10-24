@@ -13,7 +13,7 @@
   // Lines are numbered as on the homework page: non-blank lines only, every fifth one labelled.
   function passageBox(p){
     const box=document.createElement('details');box.className=p.poem?'poem':Array.isArray(p.lines)?'lined':'';box.append(text('summary',p.title||'Reading passage'));
-    if(Array.isArray(p.lines)){let n=0;p.lines.forEach(line=>{if(line===''){box.append(document.createElement('br'));return;}n++;const row=document.createElement('div');row.className='poem-line';row.append(text('span',n%5===0?String(n):'','line-number'),text('span',line));box.append(row);});}
+    if(Array.isArray(p.lines)){box.dataset.printLines='';let n=0;p.lines.forEach(line=>{if(line===''){box.append(document.createElement('br'));return;}n++;const row=document.createElement('div');row.className='poem-line';row.append(text('span',n%5===0?String(n):'','line-number'),text('span',line));box.append(row);});}
     else if(Array.isArray(p.paragraphs))p.paragraphs.forEach(t=>box.append(text('p',t)));
     if(p.note)box.append(text('p',p.note,'muted'));
     return box;
@@ -66,5 +66,13 @@
     try{const payload={requestId:attempt.id,items:attempt.scope.map(x=>({...target(x),choice:attempt.choices[itemKey(x)]}))},submissionOrigin=await originForSubmit();const data=await EmilyAPI.call('redo',{...payload,submissionOrigin});attempt.result=data.result;render();}
     catch(e){status.textContent=e.message+' Your redo choices are preserved.';}finally{busy=false;controls();list.querySelectorAll('input').forEach(x=>{x.disabled=!!attempt?.result;});}
   });
+  // Print: a passage with numbered lines prints one source line per printed line (2026-10-24). Its widest line is measured in em
+  // near the printed size (first at 12px, then at the size that width gives on A4); site.css shrinks that passage, never below 7pt.
+  const lineFits=[];
+  window.addEventListener('beforeprint',()=>{document.querySelectorAll('[data-print-lines]').forEach(block=>{const lines=Array.from(block.children).filter(n=>n.classList.contains('poem-line'));if(!lines.length)return;block.classList.add('print-lines-measure');
+    const widestAt=px=>{block.style.setProperty('--print-measure-size',px+'px');return Math.max(...lines.map(line=>{const r=document.createRange();r.selectNodeContents(line);return r.getBoundingClientRect().width/px;}));};
+    let em=widestAt(12);if(em>0)em=Math.max(em,widestAt(Math.min(13.6,685/em)));block.classList.remove('print-lines-measure');block.style.removeProperty('--print-measure-size');
+    if(em>0&&em<=72){block.style.setProperty('--print-line-em',em.toFixed(2));block.classList.add('print-lines-fit');lineFits.push(block);}});});   // above 72em even 7pt overflows A4: it keeps wrapping
+  window.addEventListener('afterprint',()=>{lineFits.splice(0).forEach(b=>{b.classList.remove('print-lines-fit');b.style.removeProperty('--print-line-em');});});
   window.addEventListener('emily-login',load);window.addEventListener('emily-logout',()=>{epoch++;attempt=null;items=[];render();status.textContent='Signed out.';});load();
 })();
