@@ -97,7 +97,364 @@ img.ProseMirror-separator {
 
 .tippy-box[data-animation=fade][data-state=hidden] {
   opacity: 0
-}.class-note{font:15px/1.5 Arial,sans-serif;border-left:3px solid #c73f3f;background:#fff7e9;color:#923535;padding:10px 14px;margin:12px 0;max-width:100%;break-inside:avoid}.class-note p{white-space:pre-wrap;margin:4px 0}.class-note strong{font-size:12px;letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:2px}body{position:relative;overflow-x:hidden}#class-ink{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:5;width:100%;height:100%}.class-tools button{padding:7px 12px;border:1px solid #24666b;background:white;border-radius:6px;color:#164f54;cursor:pointer}@media(max-width:680px){#class-ink{display:none}#ink-toggle{display:none}}@media print{#class-ink,.class-tools{display:none}.class-note{color:#333;border-color:#777}}</style></head><body class="student" style="overscroll-behavior-x: auto;"><div class="toolbar"><span>History &amp; Society · Background knowledge</span><button type="button" onclick="window.print()">Print</button></div><section class="sheet knowledge"><div class="eyebrow">Upper Level · History &amp; Society</div><h1>American Independence<br>and Government</h1><p class="lead">From British colonies to an independent nation with a constitutional government.</p>
+}.class-note{font:15px/1.5 Arial,sans-serif;border-left:3px solid #c73f3f;background:#fff7e9;color:#923535;padding:10px 14px;margin:12px 0;max-width:100%;break-inside:avoid}.class-note p{white-space:pre-wrap;margin:4px 0}.class-note strong{font-size:12px;letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:2px}body{position:relative;overflow-x:hidden}#class-ink{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:5;width:100%;height:100%}.class-tools button{padding:7px 12px;border:1px solid #24666b;background:white;border-radius:6px;color:#164f54;cursor:pointer}@media(max-width:680px){#class-ink{display:none}#ink-toggle{display:none}}@media print{#class-ink,.class-tools{display:none}.class-note{color:#333;border-color:#777}}</style><style>
+/* responsive-retrofit:core-20261104 */
+/* Window adaptation, screen only: a learner page follows the current window width and height,
+   including resizing an open window and browser zoom.
+   Reference: student-learning-portal-workflow/references/responsive-student-pages.md
+   Nothing here changes content, prompt or option order, question ids, learner answers, storage keys,
+   scoring, release gates, theme colours or the print rules: every rule is inside @media screen and
+   only decides how an existing box is sized. No page-wide transform, zoom or overflow hiding, and
+   nothing changes what is hidden or shown. */
+@media screen {
+  /* A long identifier, file name, URL or code token breaks only when it cannot fit; ordinary
+     words stay whole, in cells as well as in text. */
+  code, kbd, samp, var, a[href]:not([href^="#"]) { overflow-wrap: anywhere; }
+  p, li, dd, dt, td, th, figcaption, blockquote, summary, label { overflow-wrap: break-word; }
+  pre:not([hidden]) { max-width: 100%; overflow-x: auto; }
+
+  /* Figures and embeds stay inside their own container. Annotation ink is drawn at the coordinates
+     it was authored with, so <svg> and <canvas> are deliberately left out of this rule. */
+  img:not([hidden]), picture, video, iframe, embed, object { max-width: 100%; }
+  img:not([hidden]), video { height: auto; }
+
+  /* A table fits its pane: the columns wrap instead of widening the page. A table that is set to
+     span its pane still spans it, so nothing looks different where there was already room. */
+  table { max-width: 100%; }
+
+  /* Fields and buttons stay inside the window and keep a usable size. */
+  input:not([hidden]), select:not([hidden]), textarea:not([hidden]), button:not([hidden]) { max-width: 100%; }
+
+  /* A paper replica or ink overlay is positioned by coordinates inside its own scrolling frame:
+     it must keep its authored width. */
+  #ann-page, #ann-page *, #ann-stage, [id^="html-ink"], [id^="html-ink"] * { max-width: none; }
+}
+
+/* In a narrow window a wide table cannot be made legible by wrapping alone, so the sideways
+   scrolling belongs to the table's own box: neither the pane nor the page widens.
+   :not([hidden]) so that a table the page keeps hidden stays hidden. */
+@media screen and (max-width: 820px) {
+  table:not([hidden]) {
+    display: block;
+    width: max-content;
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+  }
+}
+</style>
+<style>
+/* responsive-retrofit:reading-panes-20261104 */
+/* Reading pages: the passage and the questions are two panes that scroll independently, at every
+   window size. Wide window: side by side. Narrow or short window: the passage on top, bounded to a
+   useful share of the window, with the questions scrolling underneath it.
+   The pane container is the element that holds both parts, and it is the question pane: bounded to
+   the window height, scrolling on its own. The passage is sticky at the top of that container with
+   its own max-height and its own scrollbar, over an opaque background taken from the page's own
+   theme, so question text cannot show through it. The last question and the actions after it stay
+   reachable because the container scrolls to its own end.
+   The script below keeps every reading passage open: a <details> passage is forced open, its
+   summary becomes a heading, and a click, a keypress or the page's own "Close all" cannot hide the
+   source. Question and answer folds are untouched, so no answer is ever revealed.
+   Screen only. Nothing moves in the markup: print keeps the original order (passage first, then its
+   questions), and every id, option order, typed value, annotation anchor and gate class is unchanged.
+   Structures covered, each matched by the container that holds both parts:
+     reading unit    section.reading-unit > .source-reading  + article.question / article.q
+     folded passage  .block-body          > .source-reading  + .tools / article.q
+     lined passage   section/div          > .lined-passage   + article.question
+     panel passage   .panel-body          > details.passage  + .demo / ol.guided
+     reading drawer  main                 > details#reading  + article
+     block passage   section.block        > div.passage      + .guide / .practice
+     preview passage main                 > section.passage  + section#questions */
+@media screen {
+  /* ---------- the question pane ---------- */
+  .reading-unit:has(> .source-reading):not([hidden]),
+  .block-body:has(> .source-reading):not([hidden]),
+  .panel-body:has(> details.passage):not([hidden]),
+  section:has(> .lined-passage):has(> article.question):not([hidden]),
+  div:has(> .lined-passage):has(> article.question):not([hidden]),
+  section.block:has(> .passage):not([hidden]),
+  main:has(> section.passage):has(> section#questions):not([hidden]),
+  main:has(> details#reading):has(> article):not([hidden]) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+    max-height: calc(100dvh - 24px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+  }
+
+  /* ---------- the passage pane: always in view, scrolls on its own ---------- */
+  .reading-unit:has(> .source-reading):not([hidden]) > .source-reading:not([hidden]),
+  .block-body:has(> .source-reading):not([hidden]) > .source-reading:not([hidden]),
+  .panel-body:has(> details.passage):not([hidden]) > details.passage:not([hidden]),
+  section:has(> .lined-passage):has(> article.question):not([hidden]) > .lined-passage:not([hidden]),
+  div:has(> .lined-passage):has(> article.question):not([hidden]) > .lined-passage:not([hidden]),
+  section.block:has(> .passage):not([hidden]) > .passage:not([hidden]),
+  main:has(> section.passage):has(> section#questions):not([hidden]) > section.passage:not([hidden]),
+  main:has(> details#reading):not([hidden]) > details#reading:not([hidden]) {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    min-width: 0;
+    margin-top: 0;
+    /* The script measures the page's own background and sets --rr-pane-bg; the fallbacks are the
+       page's own theme variables, and Canvas only if a page defines none of them. */
+    background-color: var(--rr-pane-bg, var(--paper, var(--sheet, var(--surface, var(--card, var(--bg, Canvas))))));
+    max-height: 42dvh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  /* A passage summary is a heading here, not a control: the source must stay available. */
+  [data-rr-passage-open] > summary {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    cursor: default;
+    list-style: none;
+    background-color: inherit;
+  }
+  [data-rr-passage-open] > summary::-webkit-details-marker { display: none; }
+  /* Belt and braces where the engine supports it: the passage content is never hidden. */
+  @supports selector(details::details-content) {
+    [data-rr-passage-open]::details-content { content-visibility: visible; block-size: auto; }
+  }
+}
+
+/* Below the two-pane width the pane is a column and the passage is its first row, even where the
+   markup puts a heading and an introduction before the passage: measured on these pages, the passage
+   otherwise started 574px down inside the pane and was off-screen at the top of it. `order` moves
+   the box only - the markup, the print order and the tab order stay exactly as they were. */
+@media screen and (max-width: 1099px) {
+  .reading-unit:has(> .source-reading):not([hidden]),
+  .block-body:has(> .source-reading):not([hidden]),
+  .panel-body:has(> details.passage):not([hidden]),
+  section:has(> .lined-passage):has(> article.question):not([hidden]),
+  div:has(> .lined-passage):has(> article.question):not([hidden]),
+  section.block:has(> .passage):not([hidden]),
+  main:has(> section.passage):has(> section#questions):not([hidden]),
+  main:has(> details#reading):has(> article):not([hidden]) {
+    display: flex;
+    flex-direction: column;
+  }
+  .reading-unit:has(> .source-reading):not([hidden]) > *,
+  .block-body:has(> .source-reading):not([hidden]) > *,
+  .panel-body:has(> details.passage):not([hidden]) > *,
+  section:has(> .lined-passage):has(> article.question):not([hidden]) > *,
+  div:has(> .lined-passage):has(> article.question):not([hidden]) > *,
+  section.block:has(> .passage):not([hidden]) > *,
+  main:has(> section.passage):has(> section#questions):not([hidden]) > *,
+  main:has(> details#reading):has(> article):not([hidden]) > * { order: 2; min-width: 0; }
+  .reading-unit:has(> .source-reading):not([hidden]) > .source-reading:not([hidden]),
+  .block-body:has(> .source-reading):not([hidden]) > .source-reading:not([hidden]),
+  .panel-body:has(> details.passage):not([hidden]) > details.passage:not([hidden]),
+  section:has(> .lined-passage):has(> article.question):not([hidden]) > .lined-passage:not([hidden]),
+  div:has(> .lined-passage):has(> article.question):not([hidden]) > .lined-passage:not([hidden]),
+  section.block:has(> .passage):not([hidden]) > .passage:not([hidden]),
+  main:has(> section.passage):has(> section#questions):not([hidden]) > section.passage:not([hidden]),
+  main:has(> details#reading):not([hidden]) > details#reading:not([hidden]) { order: 1; flex: 0 0 auto; }
+}
+
+/* A very short window gives the passage less room so the questions stay usable. */
+@media screen and (max-height: 480px) {
+  .reading-unit:has(> .source-reading):not([hidden]) > .source-reading:not([hidden]),
+  .block-body:has(> .source-reading):not([hidden]) > .source-reading:not([hidden]),
+  .panel-body:has(> details.passage):not([hidden]) > details.passage:not([hidden]),
+  section:has(> .lined-passage):has(> article.question):not([hidden]) > .lined-passage:not([hidden]),
+  div:has(> .lined-passage):has(> article.question):not([hidden]) > .lined-passage:not([hidden]),
+  section.block:has(> .passage):not([hidden]) > .passage:not([hidden]),
+  main:has(> section.passage):has(> section#questions):not([hidden]) > section.passage:not([hidden]),
+  main:has(> details#reading):not([hidden]) > details#reading:not([hidden]) { max-height: 38dvh; }
+}
+
+/* ---------- a wide window puts the two panes side by side ---------- */
+@media screen and (min-width: 1100px) {
+  .reading-unit:has(> .source-reading):not([hidden]),
+  .block-body:has(> .source-reading):not([hidden]),
+  .panel-body:has(> details.passage):not([hidden]),
+  section:has(> .lined-passage):has(> article.question):not([hidden]),
+  div:has(> .lined-passage):has(> article.question):not([hidden]),
+  section.block:has(> .passage):not([hidden]),
+  main:has(> section.passage):has(> section#questions):not([hidden]),
+  main:has(> details#reading):has(> article):not([hidden]) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: 24px;
+    max-height: calc(100dvh - 40px);
+  }
+  .reading-unit:has(> .source-reading):not([hidden]) > *,
+  .block-body:has(> .source-reading):not([hidden]) > *,
+  .panel-body:has(> details.passage):not([hidden]) > *,
+  section:has(> .lined-passage):has(> article.question):not([hidden]) > *,
+  div:has(> .lined-passage):has(> article.question):not([hidden]) > *,
+  section.block:has(> .passage):not([hidden]) > *,
+  main:has(> section.passage):has(> section#questions):not([hidden]) > * { grid-column: 2; min-width: 0; }
+
+  /* A heading that introduces the whole unit spans both panes. */
+  .reading-unit:has(> .source-reading):not([hidden]) > h2:first-of-type,
+  .reading-unit:has(> .source-reading):not([hidden]) > h3:first-of-type,
+  .block-body:has(> .source-reading):not([hidden]) > h3:first-of-type,
+  .panel-body:has(> details.passage):not([hidden]) > h3:first-of-type { grid-column: 1 / -1; }
+
+  .reading-unit:has(> .source-reading):not([hidden]) > .source-reading:not([hidden]),
+  .block-body:has(> .source-reading):not([hidden]) > .source-reading:not([hidden]),
+  .panel-body:has(> details.passage):not([hidden]) > details.passage:not([hidden]),
+  section:has(> .lined-passage):has(> article.question):not([hidden]) > .lined-passage:not([hidden]),
+  div:has(> .lined-passage):has(> article.question):not([hidden]) > .lined-passage {
+    grid-column: 1;
+    grid-row: 2 / span 999;
+    max-height: calc(100dvh - 120px);
+  }
+  section.block:has(> .passage):not([hidden]) > .passage:not([hidden]),
+  main:has(> section.passage):has(> section#questions):not([hidden]) > section.passage:not([hidden]),
+  main:has(> details#reading):not([hidden]) > details#reading:not([hidden]) {
+    grid-column: 1;
+    grid-row: 1 / span 999;
+    max-height: calc(100dvh - 90px);
+  }
+  main:has(> details#reading):not([hidden]) > article { grid-column: 2; min-width: 0; }
+
+  /* Two panes need the width of the window, not a single-column measure. */
+  body:has(.reading-unit > .source-reading) main,
+  body:has(.block-body > .source-reading) main,
+  body:has(.panel-body > details.passage) main,
+  body:has(.lined-passage) main,
+  body:has(main > details#reading) main,
+  body:has(section.block > .passage) main,
+  body:has(main > section.passage) main { max-width: min(1680px, 100%); }
+}
+</style>
+<script>
+/* responsive-retrofit:reading-panes-20261104 */
+/* Keeps every reading passage open and gives the sticky passage the page's own background colour.
+   Runs after the page's own scripts. It never touches a question or answer fold, never changes an
+   id, a value or a gate class, and adds nothing to the page's content. */
+(function () {
+  var PASSAGE_IN_UNIT = [
+    ['.reading-unit', '.source-reading'],
+    ['.block-body', '.source-reading'],
+    ['.panel-body', 'details.passage'],
+    ['section', '.lined-passage'],
+    ['div', '.lined-passage'],
+    ['section.block', '.passage'],
+    ['main', 'section.passage'],
+    ['main', 'details#reading']
+  ];
+
+  function opaqueBackground(el) {
+    for (var n = el.parentElement; n; n = n.parentElement) {
+      var c = getComputedStyle(n).backgroundColor;
+      if (c && c !== 'transparent' && !/^rgba\(0,\s*0,\s*0,\s*0\)$/.test(c.replace(/\s/g, ' '))) {
+        var m = c.match(/^rgba?\(([^)]+)\)$/);
+        if (!m) return c;
+        var parts = m[1].split(',').map(function (x) { return parseFloat(x); });
+        if (parts.length < 4 || parts[3] >= 0.99) return c;
+      }
+    }
+    return '';
+  }
+
+  /* A reading passage must stay available: the page's own "Close all", a click or a keypress may
+     not hide it. The open state is pinned at the property level so a programmatic close is a no-op
+     (no flicker), the attribute is restored if something removes it, and every ancestor <details>
+     that contains a passage is pinned too - otherwise closing the outer panel would hide the
+     passage with it. Question and answer folds are never touched. */
+  function pin(d) {
+    if (!d || d.tagName !== 'DETAILS' || d.hasAttribute('data-rr-passage-open')) return;
+    d.setAttribute('data-rr-passage-open', '');
+    d.setAttribute('open', '');
+    try {
+      Object.defineProperty(d, 'open', {
+        configurable: true,
+        get: function () { return true; },
+        set: function () { if (!d.hasAttribute('open')) d.setAttribute('open', ''); }
+      });
+    } catch (e) {
+      d.addEventListener('toggle', function () { if (!d.hasAttribute('open')) d.setAttribute('open', ''); });
+    }
+    if (window.MutationObserver) {
+      new MutationObserver(function () {
+        if (!d.hasAttribute('open')) d.setAttribute('open', '');
+      }).observe(d, { attributes: true, attributeFilter: ['open'] });
+    }
+    var s = d.querySelector(':scope > summary');
+    if (s) {
+      s.addEventListener('click', function (e) { e.preventDefault(); });
+      s.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') e.preventDefault();
+      });
+      s.setAttribute('aria-expanded', 'true');
+    }
+  }
+
+  function keepOpen(passage) {
+    pin(passage);
+    // and every <details> it sits inside, so the source cannot be hidden with its panel
+    for (var n = passage.parentElement; n && n !== document.body; n = n.parentElement) {
+      if (n.tagName === 'DETAILS') pin(n);
+    }
+  }
+
+  function run() {
+    var seen = [];
+    for (var i = 0; i < PASSAGE_IN_UNIT.length; i += 1) {
+      var unitSel = PASSAGE_IN_UNIT[i][0], passSel = PASSAGE_IN_UNIT[i][1];
+      var units = document.querySelectorAll(unitSel);
+      for (var u = 0; u < units.length; u += 1) {
+        var unit = units[u];
+        var passages = unit.querySelectorAll(':scope > ' + passSel);
+        if (!passages.length) continue;
+        // the container must hold something besides the passage, or it is not a pane container
+        if (unit.children.length <= passages.length) continue;
+        for (var p = 0; p < passages.length; p += 1) {
+          var pass = passages[p];
+          if (seen.indexOf(pass) >= 0) continue;
+          seen.push(pass);
+          keepOpen(pass);
+          pass.setAttribute('data-rr-pane-measured', '');
+          var bg = opaqueBackground(pass);
+          if (bg) pass.style.setProperty('--rr-pane-bg', bg);
+        }
+      }
+    }
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
+  else run();
+
+  /* A page with a theme toggle changes an attribute on <html> or <body>; the measured background
+     has to be re-read then, or a light passage would sit under dark text. Only attribute changes on
+     those two elements are watched, and only the colour is re-read, so there is no style loop. */
+  function refreshBackgrounds() {
+    document.querySelectorAll('[data-rr-pane-measured]').forEach(function (pass) {
+      pass.style.removeProperty('--rr-pane-bg');
+      var bg = opaqueBackground(pass);
+      if (bg) pass.style.setProperty('--rr-pane-bg', bg);
+    });
+  }
+  if (window.MutationObserver) {
+    var themePending = 0;
+    var themeObserver = new MutationObserver(function () {
+      if (themePending) return;
+      themePending = setTimeout(function () { themePending = 0; refreshBackgrounds(); }, 80);
+    });
+    [document.documentElement, document.body].forEach(function (n) {
+      if (n) themeObserver.observe(n, { attributes: true,
+        attributeFilter: ['class', 'data-theme', 'data-color-scheme', 'style'] });
+    });
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', refreshBackgrounds);
+  }
+  // A page that builds its reading section later (or a "Close all" that re-renders) is covered too.
+  if (window.MutationObserver) {
+    var pending = 0;
+    new MutationObserver(function () {
+      if (pending) return;
+      pending = setTimeout(function () { pending = 0; run(); }, 150);
+    }).observe(document.documentElement, { childList: true, subtree: true });
+  }
+})();
+</script>
+</head><body class="student" style="overscroll-behavior-x: auto;"><div class="toolbar"><span>History &amp; Society · Background knowledge</span><button type="button" onclick="window.print()">Print</button></div><section class="sheet knowledge"><div class="eyebrow">Upper Level · History &amp; Society</div><h1>American Independence<br>and Government</h1><p class="lead">From British colonies to an independent nation with a constitutional government.</p>
 <h2>From colonial rule to independence</h2><p class="context">Britain governed thirteen colonies in North America. Disputes over British authority and representation grew into armed conflict in 1775. In 1776, the Declaration of Independence explained the reasons for separation and asserted the colonies’ right to govern themselves. It announced a political break; it did not create today’s three-branch government.</p>
 <h2>Three documents, three different jobs</h2><table class="document-table"><thead><tr><th>Document</th><th>Milestone</th><th>Main function</th></tr></thead><tbody>
 <tr><td><strong>Declaration of Independence</strong></td><td>1776<br>Adopted</td><td>Explains and announces separation from Britain; states political ideals and grievances.</td></tr>
