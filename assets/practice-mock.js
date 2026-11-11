@@ -5,7 +5,7 @@
   const warmOrigin=()=>{try{if(window.PortalSubmissionOrigin)window.PortalSubmissionOrigin.warm();}catch(_){}};
   const $=id=>document.getElementById(id),form=$('mock-form'),status=$('mock-status'),submit=$('submit-mock'),result=$('mock-result'),conflict=$('mock-conflict');
   const assignmentId=new URLSearchParams(location.search).get('assignment')||'';
-  let a=null,storage='',revision=0,epoch=0,ready=false,submitted=false,saving=false,dirty=false,timer=null,pending='',versions=null,confirmedData=null;
+  let a=null,resultsShown=true,storage='',revision=0,epoch=0,ready=false,submitted=false,saving=false,dirty=false,timer=null,pending='',versions=null,confirmedData=null;
   const el=(tag,text)=>{const x=document.createElement(tag);if(text!==undefined)x.textContent=text;return x;};
   const say=text=>{status.textContent=text;};
   const writing=()=>a?.kind==='mock_writing';
@@ -18,7 +18,7 @@
   function passage(p){const box=el('section');box.className='practice-passage';if(p.title)box.append(el('h2',p.title));p.paragraphs.forEach(t=>box.append(el('p',t)));return box;}
   function render(){
     form.replaceChildren();$('mock-title').textContent=a.title;$('mock-level').textContent=a.levelLabel||'English practice';document.title=a.title+' · Emily SSAT';
-    $('mock-instructions').textContent=writing()?'Write your response, then submit it for teacher review. Your writing will not receive an automatic score.':'Choose an answer for each question. Submit this section to see your result and the correct answers.'+(a.sourceItemCount>a.items.length?' This section contains '+a.items.length+' selected questions and keeps the original question numbers.':'');
+    $('mock-instructions').textContent=writing()?'Write your response, then submit it for teacher review. Your writing will not receive an automatic score.':'Choose an answer for each question. '+(resultsShown?'Submit this section to see your result and the correct answers.':'Submit this section for your teacher to review.')+(a.sourceItemCount>a.items.length?' This section contains '+a.items.length+' selected questions and keeps the original question numbers.':'');
     submit.textContent=writing()?'Submit writing':'Submit section';
     if(writing()){form.append(passage({title:'Writing prompt',paragraphs:[a.prompt]}));const label=el('label','Your response');label.htmlFor='writing-response';const text=el('textarea');text.id='writing-response';text.name='response';text.spellcheck=true;form.append(label,text);}
     else {let part=null;a.items.forEach(item=>{if(item.part!==part){part=item.part;if(a.passages[part])form.append(passage(a.passages[part]));}
@@ -29,6 +29,7 @@
   async function display(receipt,generation){
     if(generation!==epoch||!EmilyAPI.signedIn())return;submitted=true;ready=false;dirty=false;clearTimeout(timer);restore(receipt);freeze(true);conflict.hidden=true;result.replaceChildren();result.hidden=false;
     if(writing()){result.append(el('h2','Writing submitted'),el('p','Your response has been received and is waiting for teacher review.'));say('Submitted. Your original writing is saved.');return;}
+    if(receipt.held||!receipt.grade){form.querySelectorAll('.mock-feedback').forEach(x=>x.remove());result.append(el('h2','Section submitted'),el('p',receipt.heldMessage||'Submitted. Waiting for your teacher to review.'));say('Submitted. Your original answers are saved.');return;}
     result.append(el('h2',receipt.grade.score+' / '+receipt.grade.total),el('p',receipt.grade.correct+' correct · '+receipt.grade.incorrect+' incorrect · '+receipt.grade.omitted+' unanswered'));
     form.querySelectorAll('.mock-feedback').forEach(x=>x.remove());
     receipt.grade.items.forEach(item=>{const mark=el('div',item.correct?'Correct':item.choice?'Incorrect · Your answer: '+item.choice:'Unanswered');mark.className='mock-feedback '+(item.correct?'correct':'incorrect');mark.dataset.feedback=item.n;form.querySelector('[data-question="'+item.n+'"]').append(mark);});
@@ -38,7 +39,7 @@
   }
   async function load(){
     if(!EmilyAPI.signedIn())return;const generation=++epoch;ready=false;submitted=false;dirty=false;clearTimeout(timer);freeze(true);conflict.hidden=true;result.hidden=true;$('mock-submit-confirm').hidden=true;confirmedData=null;say('Loading saved work…');
-    try{const data=await EmilyAPI.call('assignment',{assignmentId});if(generation!==epoch||!EmilyAPI.signedIn())return;a=data.assignment;storage='emily-mock-'+data.storageScope;render();freeze(true);
+    try{const data=await EmilyAPI.call('assignment',{assignmentId});if(generation!==epoch||!EmilyAPI.signedIn())return;a=data.assignment;resultsShown=data.resultsAfterSubmit!==false;storage='emily-mock-'+data.storageScope;render();freeze(true);
       const state=await EmilyAPI.call('state',{assignmentId});if(generation!==epoch||!EmilyAPI.signedIn())return;revision=state.draft?.revision||0;
       if(state.submitted){await display(state.receipt,generation);return;}
       let local=null;try{const raw=localStorage.getItem(storage);if(raw!==null)local=clean(JSON.parse(raw));pending=localStorage.getItem(storage+'-submit')||'';}catch(_){say('A device draft could not be loaded.');}

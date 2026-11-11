@@ -20,6 +20,7 @@
   function clearMarks(){receiptRender++;result.hidden=true;result.replaceChildren();form.querySelectorAll('.feedback').forEach(x=>x.remove());form.querySelectorAll('.chosen-right,.chosen-wrong,.key-right').forEach(x=>x.classList.remove('chosen-right','chosen-wrong','key-right'));}
   async function displayReceipt(receipt){
     submitted=true;ready=false;dirty=false;clearTimeout(timer);restore(receipt.answers);freeze(true);conflict.hidden=true;clearMarks();const render=receiptRender,generation=authEpoch;result.hidden=false;
+    if(receipt.held||!receipt.grade){const wait=document.createElement('p');wait.textContent=receipt.heldMessage||'Submitted. Waiting for your teacher to review.';result.append(wait);say('Submitted. Your original answers are saved.');showFirstUnit();return;}
     const heading=document.createElement('h2');heading.textContent='Submitted · '+receipt.grade.score+' / '+receipt.grade.total;result.append(heading);
     const note=document.createElement('p');note.textContent=receipt.provenance.kind==='external_wechat'?'Your homework sent through WeChat has been recorded and marked.':'Your submission has been received and marked.';result.append(note);
     const review=document.createElement('a');review.href='../review/index.html';review.textContent='Open mistake logbook';result.append(review);say('Submitted. Your original answers are saved.');
