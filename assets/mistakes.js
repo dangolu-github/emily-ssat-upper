@@ -5,7 +5,11 @@
   const warmOrigin=()=>{try{if(window.PortalSubmissionOrigin)window.PortalSubmissionOrigin.warm();}catch(_){}};
   const list=document.getElementById('mistake-list'),status=document.getElementById('review-status'),progress=document.getElementById('redo-progress');
   const type=document.getElementById('type-filter'),view=document.getElementById('list-filter'),start=document.getElementById('redo-page'),check=document.getElementById('check-page'),exit=document.getElementById('exit-redo'),refresh=document.getElementById('refresh-list');
-  let items=[],attempt=null,busy=false,epoch=0;
+  const pageSelect=document.getElementById('page-filter'),pageLabel=document.getElementById('page-label');
+  // Pages of 25 (2026-11-12): homework and mock mistakes together can pass the service's 60-question redo limit (and its 8.5 KB
+  // redo record), so a longer view is shown and redone one page at a time.
+  const PAGE=25;
+  let items=[],attempt=null,busy=false,epoch=0,page=0;
   const target=x=>({assignmentId:x.assignmentId,receiptId:x.receiptId,itemId:x.itemId});
   const itemKey=x=>x.receiptId+'_'+x.itemId;
   function text(tag,value,cls){const e=document.createElement(tag);e.textContent=value;if(cls)e.className=cls;return e;}
@@ -19,10 +23,18 @@
     return box;
   }
   function visible(){return items.filter(x=>(!type.value||x.questionType===type.value)&&x.removed===(view.value==='removed'));}
-  function controls(){const active=!!attempt;type.disabled=view.disabled=refresh.disabled=active||busy;start.hidden=active;start.disabled=busy||!visible().length;check.hidden=exit.hidden=!active;check.disabled=busy||!!attempt?.result;exit.disabled=busy;}
+  function pageCount(){return Math.max(1,Math.ceil(visible().length/PAGE));}
+  function pageItems(){if(page>=pageCount())page=pageCount()-1;return visible().slice(page*PAGE,(page+1)*PAGE);}
+  function paintPages(){
+    const all=visible().length,n=pageCount();if(page>=n)page=n-1;if(!pageSelect)return;
+    if(pageLabel)pageLabel.hidden=all<=PAGE;
+    pageSelect.replaceChildren(...Array.from({length:n},(_,i)=>new Option((i*PAGE+1)+'–'+Math.min(all,(i+1)*PAGE)+' of '+all,String(i))));pageSelect.value=String(page);
+  }
+  function controls(){const active=!!attempt;type.disabled=view.disabled=refresh.disabled=active||busy;if(pageSelect)pageSelect.disabled=active||busy;start.hidden=active;start.disabled=busy||!pageItems().length;check.hidden=exit.hidden=!active;check.disabled=busy||!!attempt?.result;exit.disabled=busy;}
   function render(){
-    list.replaceChildren();const shown=attempt?attempt.scope:visible();
-    status.textContent=shown.length+' question'+(shown.length===1?'':'s')+(attempt?' in this redo.':' in this view.');
+    if(!attempt)paintPages();
+    list.replaceChildren();const shown=attempt?attempt.scope:pageItems(),all=visible().length;
+    status.textContent=!attempt&&all>PAGE?'Questions '+(page*PAGE+1)+'–'+(page*PAGE+shown.length)+' of '+all+' in this view.':shown.length+' question'+(shown.length===1?'':'s')+(attempt?' in this redo.':' in this view.');
     progress.textContent=attempt?(attempt.result?'Page result: '+attempt.result.score+' / '+attempt.result.total:Object.keys(attempt.choices).length+' / '+shown.length+' answered'):'';
     shown.forEach((item,index)=>{
       const article=document.createElement('article');article.dataset.item=itemKey(item);
@@ -56,8 +68,9 @@
   }
   async function load(){if(!EmilyAPI.signedIn()){items=[];render();status.textContent='Sign in to view your submitted work.';return;}busy=true;controls();status.textContent='Loading your submitted work…';const generation=++epoch;
     try{const result=await EmilyAPI.call('mistakes');if(generation!==epoch||!EmilyAPI.signedIn())return;items=result.items;const prior=type.value;type.replaceChildren(new Option('All question types',''),...[...new Set(items.map(x=>x.questionType))].map(x=>new Option(x,x)));type.value=prior;render();}catch(e){status.textContent=e.message;}finally{busy=false;controls();}}
-  [type,view].forEach(x=>x.addEventListener('change',()=>{epoch++;render();}));refresh.addEventListener('click',load);
-  start.addEventListener('click',()=>{const scope=visible().map(x=>({...x}));if(!scope.length)return;epoch++;attempt={id:crypto.randomUUID(),scope,choices:{},result:null};warmOrigin();render();list.querySelector('input')?.focus();});
+  [type,view].forEach(x=>x.addEventListener('change',()=>{epoch++;page=0;render();}));refresh.addEventListener('click',load);
+  if(pageSelect)pageSelect.addEventListener('change',()=>{page=Number(pageSelect.value)||0;epoch++;render();});
+  start.addEventListener('click',()=>{const scope=pageItems().map(x=>({...x}));if(!scope.length)return;epoch++;attempt={id:crypto.randomUUID(),scope,choices:{},result:null};warmOrigin();render();list.querySelector('input')?.focus();});
   exit.addEventListener('click',()=>{attempt=null;epoch++;render();});
   check.addEventListener('click',async()=>{
     if(!attempt||busy)return;const missing=attempt.scope.find(x=>!attempt.choices[itemKey(x)]);
