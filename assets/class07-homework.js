@@ -13,7 +13,9 @@
   function restore(a){form.querySelectorAll('input').forEach(x=>{x.checked=a[x.name]===x.value;});updateCount();}
   function updateCount(){count.textContent=total?Object.keys(answers()).length+' of '+total+' answered':'';}
   function persist(){hasLocalDraft=true;try{localStorage.setItem(storageKey,JSON.stringify(answers()));}catch(_){say('Your choices could not be saved on this device. Download your answer sheet before leaving.');}}
-  function freeze(value){form.querySelectorAll('input,button').forEach(x=>{x.disabled=value;});submit.disabled=value;}
+  // Locks the answer controls only. The part tabs and the Next buttons also sit inside the form and must stay live after hand-in,
+  // or the page stays on the first part (2026-11-22: Analogies and Reading could not be opened once the homework was submitted).
+  function freeze(value){form.querySelectorAll('input,button[data-clear]').forEach(x=>{x.disabled=value;});submit.disabled=value;}
   function clean(a){const x={};for(let n=1;n<=60;n++)if(/^[A-E]$/.test(a['q'+n]||''))x['q'+n]=a['q'+n];return x;}
   function same(a,b){return JSON.stringify(clean(a))===JSON.stringify(clean(b));}
   try{hasLocalDraft=localStorage.getItem(storageKey)!==null;restore(clean(JSON.parse(localStorage.getItem(storageKey)||'{}')));pendingId=localStorage.getItem(storageKey+'-submit-request')||'';}catch(_){say('A previous draft could not be loaded.');}
