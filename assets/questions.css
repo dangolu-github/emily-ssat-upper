@@ -51,7 +51,19 @@
 .q-set [data-add-to]{justify-self:start;min-height:44px}
 .q-set [data-composer-host]:empty,.q-set [data-set-msg]:empty{display:none}
 .q-set [data-composer-host]{padding-top:6px}
+/* Marked work (2026-11-28): marked PDFs, shown inside the page once opened. */
+.q-marked{margin-bottom:28px}
+.q-marked h2{margin:0 0 12px}
+.q-marked-list{list-style:none;margin:0;padding:0;display:grid;gap:14px}
+.q-marked-item{display:grid;gap:8px;min-width:0}
+.q-marked-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;font:15px/1.5 Arial,sans-serif}
+.q-marked-title{font-weight:700;overflow-wrap:anywhere;min-width:0}
+.q-marked-row button,.q-marked-link{min-height:44px;display:inline-flex;align-items:center;text-decoration:none}
+.q-marked-row button{margin-left:auto}
+.q-marked-row .q-marked-link:first-of-type{margin-left:auto}
+.q-pdf{display:block;width:100%;height:min(82vh,1200px);min-height:360px;border:1px solid #dce3dd;border-radius:6px;background:#fff}
 @media (max-width:600px){
+  .q-marked-row button,.q-marked-link{flex:1 1 auto;justify-content:center;margin-left:0!important}
   .q-file{grid-template-columns:56px minmax(0,1fr)}
   .q-thumb{width:56px;height:56px}
   .q-file>.q-remove{grid-column:1 / -1;justify-self:start}
@@ -59,6 +71,6 @@
   .q-send-row button{flex:1 1 auto}
 }
 @media print{
-  .q-new,.q-remove,[data-add-to],[data-composer-host],#account-panel,nav{display:none!important}
+  .q-new,.q-remove,[data-add-to],[data-composer-host],#account-panel,nav,.q-pdf,.q-marked-link,[data-open-marked]{display:none!important}
   .q-set{break-inside:avoid}
 }

@@ -7,7 +7,7 @@
   const TYPES={png:'image/png',jpg:'image/jpeg',jpeg:'image/jpeg',webp:'image/webp',heic:'image/heic',heif:'image/heif',pdf:'application/pdf'};
   const EXT_OF={'image/png':'png','image/jpeg':'jpg','image/webp':'webp','image/heic':'heic','image/heif':'heif','application/pdf':'pdf'};
   const ACCEPT='image/*,application/pdf,.heic,.heif,.pdf';
-  const S={ready:false,sets:[],limits:{fileBytes:12*1024*1024,filesPerSet:30},loaded:false,composers:{},active:'new',pasted:0};
+  const S={ready:false,sets:[],limits:{fileBytes:12*1024*1024,filesPerSet:30},loaded:false,composers:{},active:'new',pasted:0,marked:[],viewer:{}};
   const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const newId=p=>{const a=new Uint8Array(12);crypto.getRandomValues(a);return p+'-'+Array.from(a,b=>b.toString(16).padStart(2,'0')).join('');};
   const size=n=>n>=1048576?(n/1048576).toFixed(1)+' MB':Math.max(1,Math.round(n/1024))+' KB';
@@ -105,10 +105,34 @@
       (open&&S.ready?(c?'':'<button type="button" class="button-secondary" data-add-to="'+esc(s.id)+'">Add files</button>')+'<div data-composer-host>'+(c?composerHtml(c):'')+'</div>':'')+
       '<p class="q-msg" data-set-msg role="status" aria-live="polite"></p></article>';
   }
+  // Marked work (2026-11-28): marked PDFs, loaded after sign-in when opened.
+  const day=v=>{const d=new Date(String(v||'')+'T12:00:00');return isNaN(d)?'':d.toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'});};
+  function markedHtml(){
+    if(!S.marked.length)return '';
+    return '<section class="panel q-marked" aria-labelledby="q-marked-title"><h2 id="q-marked-title">Marked work</h2><ul class="q-marked-list">'+
+      S.marked.map(f=>{const v=S.viewer[f.id]||{};
+        return '<li class="q-marked-item" data-marked="'+esc(f.id)+'"><div class="q-marked-row"><span class="q-kind">PDF</span><span class="q-marked-title">'+esc(f.title)+'</span><span class="muted">'+esc(day(f.date))+'</span>'+
+          (v.url?'<a class="button button-secondary q-marked-link" href="'+esc(v.url)+'" download="'+esc(f.name)+'">Download</a><a class="button button-secondary q-marked-link" href="'+esc(v.url)+'" target="_blank" rel="noopener">Open in a new tab</a>'
+            :'<button type="button" data-open-marked="'+esc(f.id)+'"'+(v.loading?' disabled':'')+'>'+(v.loading?'Opening…':'Open')+'</button>')+'</div>'+
+          (v.message?'<p class="q-msg error" role="status">'+esc(v.message)+'</p>':'')+
+          (v.url?'<iframe class="q-pdf" title="'+esc(f.title)+'" src="'+esc(v.url)+'"></iframe>':'')+'</li>';}).join('')+'</ul></section>';
+  }
+  async function openMarked(id){
+    const v=S.viewer[id]||(S.viewer[id]={});if(v.loading||v.url)return;
+    v.loading=true;v.message='';render();
+    try{
+      const r=await EmilyAPI.call('markedFile',{fileId:id},{timeout:120000});
+      const bin=atob(r.data||''),bytes=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
+      if(!bytes.length)throw new Error('This file could not be opened. Please try again.');
+      v.url=URL.createObjectURL(new Blob([bytes],{type:'application/pdf'}));
+    }catch(e){v.message=e.message||'This file could not be opened. Please try again.';}
+    v.loading=false;render();
+  }
+  function clearMarked(){Object.keys(S.viewer).forEach(k=>{if(S.viewer[k].url)URL.revokeObjectURL(S.viewer[k].url);});S.viewer={};S.marked=[];}
   function render(){
     const fresh=composer('new');
     const sets=S.sets.length?S.sets.map(setHtml).join(''):'<p class="muted">Nothing sent yet.</p>';
-    app.innerHTML=(S.ready?'<section class="panel q-new" aria-labelledby="q-new-title"><h2 id="q-new-title">New set</h2>'+composerHtml(fresh)+'</section>':
+    app.innerHTML=markedHtml()+(S.ready?'<section class="panel q-new" aria-labelledby="q-new-title"><h2 id="q-new-title">New set</h2>'+composerHtml(fresh)+'</section>':
       '<p class="notice" role="status">Sending files here is not open yet. Send your questions on WeChat for now.</p>')+
       (S.ready||S.sets.length?'<section class="q-sent" aria-labelledby="q-sent-title"><h2 id="q-sent-title">Sent sets</h2>'+sets+'</section>':'');
     Object.keys(S.composers).forEach(k=>paintComposer(S.composers[k]));
@@ -173,6 +197,7 @@
   app.addEventListener('click',e=>{
     const t=e.target.closest('button');if(!t)return;
     if(t.dataset.retry){load();return;}
+    if(t.dataset.openMarked){openMarked(t.dataset.openMarked);return;}
     if(t.dataset.addTo){composer(t.dataset.addTo);S.active=t.dataset.addTo;render();const pick=app.querySelector('form[data-composer="'+t.dataset.addTo+'"] [data-pick]');if(pick)pick.focus();return;}
     if(t.hasAttribute('data-close-composer')){const c=composerOf(t);if(c){closeComposer(c.key);render();}return;}
     if(t.hasAttribute('data-drop-file')){const c=composerOf(t),row=t.closest('[data-file]');if(!c||c.sending)return;const i=c.files.findIndex(f=>f.id===row.dataset.file);if(i>=0){if(c.files[i].thumb)URL.revokeObjectURL(c.files[i].thumb);c.files.splice(i,1);c.message='';c.tone='';paintComposer(c);}return;}
@@ -199,9 +224,10 @@
     if(!window.EmilyAPI||!EmilyAPI.signedIn()){S.loaded=false;app.innerHTML='<p class="q-status" role="status">Sign in to send your questions.</p>';return;}
     if(loading)return;loading=true;if(!quiet||!S.loaded)app.innerHTML='<p class="q-status" role="status">Loading…</p>';
     try{
-      const r=await EmilyAPI.call('questionSets');
+      const [r,m]=await Promise.all([EmilyAPI.call('questionSets'),EmilyAPI.call('markedList').catch(()=>null)]);
       if(!EmilyAPI.signedIn())return;
       S.ready=!!r.ready;S.sets=r.sets||[];if(r.limits)S.limits=r.limits;S.loaded=true;
+      if(m&&Array.isArray(m.files)){S.marked=m.files;Object.keys(S.viewer).forEach(k=>{if(!S.marked.some(f=>f.id===k)){if(S.viewer[k].url)URL.revokeObjectURL(S.viewer[k].url);delete S.viewer[k];}});}
       Object.keys(S.composers).forEach(k=>{if(k!=='new'&&!S.sets.some(s=>s.id===k&&s.state!=='taught'))closeComposer(k);});
       render();
     }catch(e){
@@ -210,6 +236,6 @@
     }finally{loading=false;}
   }
   window.addEventListener('emily-login',()=>load());
-  window.addEventListener('emily-logout',()=>{Object.keys(S.composers).forEach(k=>{S.composers[k].sending=false;closeComposer(k);});S.composers={};S.sets=[];S.loaded=false;app.innerHTML='<p class="q-status" role="status">Signed out.</p>';});
+  window.addEventListener('emily-logout',()=>{Object.keys(S.composers).forEach(k=>{S.composers[k].sending=false;closeComposer(k);});S.composers={};S.sets=[];S.loaded=false;clearMarked();app.innerHTML='<p class="q-status" role="status">Signed out.</p>';});
   load();
 })();
