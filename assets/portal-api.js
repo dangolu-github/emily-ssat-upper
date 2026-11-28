@@ -12,8 +12,9 @@
   function paint(){document.documentElement.classList.toggle('emily-site-locked',!authenticated);login.hidden=authenticated||!!token;logout.hidden=!authenticated;title.hidden=authenticated;retry.hidden=true;message.textContent=authenticated?'This device is remembered.':token?'Opening your website…':'Enter the website password to continue.';}
   function forget(){token='';authenticated=false;try{localStorage.removeItem(key);}catch(_){}paint();window.dispatchEvent(new Event('emily-logout'));}
   function accept(result){token=result.token;authenticated=true;let saved=true;try{localStorage.setItem(key,token);}catch(_){saved=false;}paint();if(!saved)message.textContent='Website open. Allow browser storage to remember this device next time.';window.dispatchEvent(new Event('emily-login'));}
-  async function api(action,payload={}){
-    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),45000);
+  // options.timeout (ms): a longer wait for a call that carries a file (Questions for class); every other call keeps 45 s.
+  async function api(action,payload={},options={}){
+    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),Number(options&&options.timeout)||45000);
     try{
       const response=await fetch(window.EMILY_PORTAL.endpoint,{method:'POST',redirect:'follow',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({...payload,action,token}),signal:controller.signal});
       if(!response.ok)throw new Error('Connection unavailable. Your choices are still here; please try again.');

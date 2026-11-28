@@ -1,0 +1,64 @@
+/* Questions for class: sets of screenshots, photos and PDF files sent for class. Uses the site colours from site.css.
+   Every box sizes itself from its own container, so the page follows the window width, height and zoom. */
+.q-status{color:#61716d}
+.q-new h2,.q-sent h2{margin:0 0 14px}
+.q-sent{margin-top:34px}
+.q-composer{display:grid;gap:14px;min-width:0}
+.q-field{display:grid;gap:6px;font:600 15px/1.5 Arial,sans-serif}
+.q-field input,.q-field textarea,.q-file-note input{width:100%;min-height:44px;padding:9px 12px;border:1px solid #a8bcb6;border-radius:5px;background:#fff;color:#1d3438;font:16px/1.5 Arial,sans-serif}
+.q-field textarea{resize:vertical;min-height:64px}
+.q-field textarea:focus-visible{outline:3px solid #bc7a26;outline-offset:3px}
+.q-field input:disabled,.q-field textarea:disabled,.q-file-note input:disabled{background:#f4f6f3;color:#61716d}
+.q-optional{font-weight:400;color:#61716d}
+.q-drop{display:grid;justify-items:start;gap:8px;padding:18px;border:2px dashed #a8bcb6;border-radius:10px;background:#f8faf7}
+.q-drop.is-over{border-color:#205e61;background:#e5efe8}
+.q-drop p{margin:0}
+.q-drop-line{font:16px/1.5 Arial,sans-serif}
+.q-pick{position:relative;min-height:44px;display:inline-flex;align-items:center;cursor:pointer}
+.q-pick input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.q-pick:focus-within{outline:3px solid #bc7a26;outline-offset:3px}
+.q-files{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.q-files:empty{display:none}
+.q-file{display:grid;grid-template-columns:72px minmax(0,1fr) auto;gap:10px 14px;align-items:start;padding:12px;border:1px solid #dce3dd;border-radius:10px;background:#fff}
+.q-thumb{width:72px;height:72px;display:grid;place-items:center;border-radius:6px;background:#edf2ed;overflow:hidden}
+.q-thumb img{width:100%;height:100%;object-fit:cover}
+.q-badge{font:700 13px/1 Arial,sans-serif;color:#205e61;letter-spacing:.04em}
+.q-file-body{display:grid;gap:4px;min-width:0;font:15px/1.5 Arial,sans-serif}
+.q-file-name{font-weight:700;overflow-wrap:anywhere}
+.q-file-state{font-weight:600;color:#61716d}
+.q-file-state.is-sent{color:#236241}
+.q-file-state.is-error{color:#9a3412}
+.q-file-note{display:grid;gap:4px;margin-top:4px;font:600 14px/1.5 Arial,sans-serif}
+.q-remove{min-height:44px;padding:8px 12px;background:#fff;color:#9a3412;border:1px solid #e3c6bd;border-radius:6px;font:600 14px/1.4 Arial,sans-serif}
+.button-secondary{background:#fff;color:#205e61;border:1px solid #c9d8cf}
+.q-send-row button{min-height:44px}
+.q-msg{margin:0;min-height:1.4em;color:#61716d;font:14px/1.6 Arial,sans-serif;flex:1 1 220px}
+.q-msg.success{color:#236241}
+.q-msg.error{color:#9a3412}
+.q-set{display:grid;gap:10px;min-width:0}
+.q-set-head h3{margin:0;font-size:21px;overflow-wrap:anywhere}
+.q-set-meta{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;margin:6px 0 0;color:#61716d;font:14px/1.6 Arial,sans-serif}
+.q-state{padding:2px 10px;border-radius:999px;font:700 12px/1.7 Arial,sans-serif}
+.q-state.is-sent{background:#f7efd9;color:#8b641f}
+.q-state.is-taught{background:#e2f3e7;color:#236241}
+.q-set-note{margin:0;padding:8px 12px;border-left:3px solid #d4e4dc;font:15px/1.6 Arial,sans-serif;white-space:pre-wrap;overflow-wrap:anywhere}
+.q-set-files{list-style:none;margin:0;padding:0;font:15px/1.5 Arial,sans-serif}
+.q-set-files li{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;padding:8px 0;border-top:1px solid #e6ebe6}
+.q-kind{flex:none;padding:1px 8px;border-radius:999px;background:#e0ecdf;color:#205e61;font:700 12px/1.7 Arial,sans-serif}
+.q-set-file-name{font-weight:600;overflow-wrap:anywhere;min-width:0}
+.q-set-file-note{flex:1 1 200px;color:#4d5f5b;overflow-wrap:anywhere}
+.q-set-files .q-remove{margin-left:auto}
+.q-set [data-add-to]{justify-self:start;min-height:44px}
+.q-set [data-composer-host]:empty,.q-set [data-set-msg]:empty{display:none}
+.q-set [data-composer-host]{padding-top:6px}
+@media (max-width:600px){
+  .q-file{grid-template-columns:56px minmax(0,1fr)}
+  .q-thumb{width:56px;height:56px}
+  .q-file>.q-remove{grid-column:1 / -1;justify-self:start}
+  .q-drop{padding:14px}
+  .q-send-row button{flex:1 1 auto}
+}
+@media print{
+  .q-new,.q-remove,[data-add-to],[data-composer-host],#account-panel,nav{display:none!important}
+  .q-set{break-inside:avoid}
+}
